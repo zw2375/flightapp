@@ -394,6 +394,12 @@ def customer_home():
             else:
                 return redirect(url_for("customer_home"))
 
+@app.route("/sign_out", methods = ['POST','GET'])
+def sign_out():
+    if request.method == 'GET':
+        session.clear()
+        return render_template('sign_out.html')
+
 
 
 if __name__ == "__main__":

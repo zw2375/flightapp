@@ -1,4 +1,7 @@
-
+.bye{
+  font-size: 50px;
+  margin-top: 25%;
+}
 .identity select{
   background-color:  #e7e7e7; /* Green */
   border: none;
@@ -10,8 +13,6 @@
   font-size: 13px;
   margin: 4px 2px;
   cursor: pointer;
-
-
 }
 
 .signin, .signup{

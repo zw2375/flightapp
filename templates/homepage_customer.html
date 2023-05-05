@@ -2,7 +2,12 @@
 
 {%block body %}
 <script src="https://www.gstatic.com/charts/loader.js"></script>
+<form class="d-flex" >
 
+	<a href='{{ url_for("sign_out") }}'>
+		<input type = 'button' class="btn btn-outline-success"  style="margin-right: 10pt; color = white;" value="Sign out"/>
+	</a>
+</form>
 <div class="container">
 	<div class="home-content">
 		<div class="home-form">
