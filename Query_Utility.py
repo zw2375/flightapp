@@ -386,6 +386,37 @@ def add_as(conn, session):
 # Start of Homepage utility function
 
 # customer
+def get_my_spendings_total_amount(conn, email, start_date, end_date):
+    cursor = conn.cursor()
+    query = """SELECT SUM(price)
+               FROM ticket NATURAL JOIN purchases NATURAL JOIN flight
+               WHERE customer_email = %s AND purchase_date BETWEEN %s AND %s
+            """
+    cursor.execute(query, (email, start_date, end_date))
+    data = cursor.fetchall()
+    cursor.close()
+    print(data)
+    if data[0]['SUM(price)'] == None:
+        return 0
+    else:
+        return data[0]['SUM(price)']
+
+
+def get_my_spendings_certain_range(conn, email, start_date, end_date):
+    cursor = conn.cursor()
+    query = """SELECT purchase_date, price
+                FROM ticket NATURAL JOIN purchases NATURAL JOIN flight
+                WHERE customer_email = %s AND purchase_date BETWEEN %s AND %s
+            """
+    # print(query)
+    cursor.execute(query, (email, start_date, end_date))
+    data = cursor.fetchall()
+    cursor.close()
+    for i in range(len(data)):
+        data[i] = [data[i][k] for k in ['purchase_date', 'price']]
+        data[i][0] = data[i][0].strftime("%Y-%m-%d")
+        data[i][1] = int(data[i][1])
+    return data
 
 
 # agent
