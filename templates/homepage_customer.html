@@ -176,7 +176,9 @@
 						<td><a href="#" class="btn btn-danger">Finished</a></td>
 						{%endif%}
 						<td>
-							<button type="submit" value="{{i['flight_num']}}" name = "submit_button" class="purchase" >purchase</button>
+							<form method="post" >
+							<button type="submit" value="{{i['flight_num']}}" name = "submit_button"  class="btn btn-warning" >purchase</button>
+							</form>
 						</td>
 					</tr>
 					{% endfor %}

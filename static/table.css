@@ -2056,7 +2056,7 @@ border: 1px solid transparent;
 padding: 0.375rem 0.75rem;
 font-size: 1rem;
 line-height: 1.5;
-pointer-events: none;
+/* */
 border-radius: 0.25rem;
 -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
 transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
@@ -2068,6 +2068,9 @@ transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-
     -webkit-transition: none;
     -o-transition: none;
     transition: none; } }
+.btn-danger, .btn-success{
+    pointer-events: none; 
+}
 .btn:hover {
     color: #212529;
     text-decoration: none; }
@@ -2075,7 +2078,7 @@ transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-
     outline: 0;
     -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }
-.btn.disabled, .btn:disabled {
+.btn-success.disabled, .btn-danger:disabled {
     opacity: 0.65; }
 
 a.btn.disabled,

@@ -56,7 +56,7 @@ def get_locations(conn):
         d_dic['departure_airport'].append(str(data[i]['departure_airport']))
         d_dic['arrival_airport'].append(str(data[i]['arrival_airport']))
 
-    print(d_dic)
+    # print(d_dic)
 
     # get rid of all the duplicate elements
     d_dic['departure_airport'] = remove_duplicate(d_dic['departure_airport'])
@@ -395,7 +395,7 @@ def get_my_spendings_total_amount(conn, email, start_date, end_date):
     cursor.execute(query, (email, start_date, end_date))
     data = cursor.fetchall()
     cursor.close()
-    print(data)
+    # print(data)
     if data[0]['SUM(price)'] == None:
         return 0
     else:

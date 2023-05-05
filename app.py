@@ -356,14 +356,14 @@ def customer_home():
                                month_wise=month_wise
                             )
         else:
+            print("hihihi")
             flight_num = request.form["submit_button"]
+            
             success,err = query.purchase(conn, flight_num, session['email'], 'NULL')
             if success:
                 return redirect(url_for("customer_home"))
             else:
                 return redirect(url_for("customer_home"))
-
-
 
 
 
