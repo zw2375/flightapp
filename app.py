@@ -19,7 +19,8 @@ conn = pymysql.connect(host= 'localhost',
 
 def get_each_month(month_wise, start_year, start_month, end_year, end_month, start_date, end_date):
     if start_year == end_year and start_month == end_month:
-        month_wise.append([start_date, end_date, 0])
+        month_wise.append
+        ([start_date, end_date, 0])
     else:
         if start_month == 12:
             start_year += 1
@@ -58,7 +59,6 @@ def update_month_wise_my_spendings(my_spendings, month_wise):
                     break
     for i in range(len(month_wise)):
         month_wise[i] = [month_wise[i][0] + " -> " + month_wise[i][1], month_wise[i][2]]
-
 
 def update_month_wise_reports(reports, month_wise):
     for i in reports:
@@ -272,7 +272,7 @@ def customer_home():
     if not session["signin"] and request.method == 'GET':
         session["error"] = 'Invalid username or password, please try again.'
         return redirect(url_for("sign_in"))
-    elif session["signin"] and request.method == "GET":
+    elif (session["signin"] and request.method == "GET") or(session["signin"] and request.method=="POST" and request.form["submit_button"]=="clear_search"):
         TODAY = datetime.today()
         PAST = (TODAY - timedelta(days=365))
         THIS_YEAR, PAST_YEAR, THIS_MONTH = TODAY.year, TODAY.year - 1, TODAY.month
@@ -293,7 +293,9 @@ def customer_home():
                                                                month_wise[0][1])
 
         month_wise.sort()
+        print("Successful:",month_wise)
         update_month_wise_my_spendings(my_spendings, month_wise)
+        print("Successful:",month_wise)
         data_dic = query.public_view(conn)
         purchased_flight = query.get_purchased_flight(conn, session)
         return render_template('homepage_customer.html',
@@ -311,6 +313,29 @@ def customer_home():
                                # spent = query.get_spent(query.get_past_year_period())))
     if session["signin"] and request.method =='POST':
         purchased_flight = query.get_purchased_flight(conn, session)
+        TODAY = datetime.today()
+        PAST = (TODAY - timedelta(days=365))
+        THIS_YEAR, PAST_YEAR, THIS_MONTH = TODAY.year, TODAY.year - 1, TODAY.month
+        month_wise.append(["%d-%02d-01" % (THIS_YEAR, THIS_MONTH), TODAY.strftime("%Y-%m-%d"), 0])
+        for i in range(1, 6):
+            if THIS_MONTH - i > 0:
+                temp = ["%d-%02d-01" % (THIS_YEAR, THIS_MONTH - i), "%d-%02d-01" % (THIS_YEAR, THIS_MONTH - i + 1), 0]
+            elif THIS_MONTH - i + 1 > 0:
+                temp = ["%d-%02d-01" % (PAST_YEAR, 12 + (THIS_MONTH - i)),
+                        "%d-%02d-01" % (THIS_YEAR, THIS_MONTH - i + 1), 0]
+            else:
+                temp = ["%d-%02d-01" % (PAST_YEAR, 12 + (THIS_MONTH - i)),
+                        "%d-%02d-01" % (THIS_YEAR, 12 + (THIS_MONTH - i + 1)), 0]
+            month_wise.append(temp)
+        total_amount = query.get_my_spendings_total_amount(conn, session["email"], PAST.strftime("%Y-%m-%d"),
+                                                              TODAY.strftime("%Y-%m-%d"))
+        my_spendings = query.get_my_spendings_certain_range(conn, session["email"], month_wise[-1][0],
+                                                               month_wise[0][1])
+
+        month_wise.sort()
+        
+        update_month_wise_my_spendings(my_spendings, month_wise)
+        # print("Unsuccessful:",month_wise)
         if request.form["submit_button"] == "search":
             html_get = {'from': request.form.get('from'),
                     'to': request.form.get('to'),
@@ -327,22 +352,26 @@ def customer_home():
                                purchased = purchased_flight,
                                airlines = query.get_airlines(conn),
                                flight_num = query.get_flight_num(conn),
-                               data_list = d)
+                               data_list = d,
+                               total_amount=total_amount, 
+                               month_wise=month_wise)
         elif request.form["submit_button"] == "filter":
+            data_dic = query.public_view(conn)
             start_date = request.form["start_date"]
             end_date = request.form["end_date"]
-            data_dic = query.public_view(conn)
             # print(start_date, end_date)
             start_year, start_month = int(start_date[:4]), int(start_date[5:7])
             end_year, end_month = int(end_date[:4]), int(end_date[5:7])
-
+            month_wise = []
             get_each_month(month_wise, start_year, start_month, end_year, end_month, start_date, end_date)
             print(month_wise)
 
             total_amount = query.get_my_spendings_total_amount(conn, session["email"], start_date, end_date)
             my_spendings = query.get_my_spendings_certain_range(conn, session["email"], start_date, end_date)
             # print(total_amount)
-            update_month_wise_my_spendings(my_spendings, month_wise)
+
+            update_month_wise_my_spendings(my_spendings, month_wise)# print(total_amount)
+            # update_month_wise_my_spendings(my_spendings, month_wise)
             return render_template('homepage_customer.html',
                                # same results as
                                departure_city=locations['departure_loc'],
