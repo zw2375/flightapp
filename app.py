@@ -312,12 +312,12 @@ def customer_home():
     if session["signin"] and request.method =='POST':
         purchased_flight = query.get_purchased_flight(conn, session)
         if request.form["submit_button"] == "search":
-            data_dic = query.filter_result(conn, html_get)
             html_get = {'from': request.form.get('from'),
                     'to': request.form.get('to'),
                     'dt': request.form.get('date'),
                     'flight_num':request.form.get("flight_num"),
                     'airline': request.form.get("airline")}
+            data_dic = query.filter_result(conn, html_get)
             flight_num = html_get["flight_num"]
             return render_template('homepage_customer.html',
                                # same results as
