@@ -1,0 +1,135 @@
+{% extends"layout.html" %}
+
+{%block body %}
+<section class="signup">
+    <div class="container">
+        <div class="signup-content">
+            <div class="signup-form">
+                <h2 class="form-title">Sign up</h2>
+                <form method="POST" class="register-form" id="register-form"autocomplete="chrome-off">
+                    <div class = "identity">
+                        <!-- <div class="form-group"> -->
+                            <label for="selectIdentity">Sign up as:</label>
+                            <select id="selectIdentity">
+                              <option value="customer">Customer</option>
+                              <option value="booking_agent">Booking Agent</option>
+                              <option value="airline_staff">Airline Staff</option>
+                            </select>
+                          <!-- </div> -->
+                    </div>
+                    <div id = "customer-form">
+                        <div class="form-group">
+                            <label for="cus_email"></label>
+                            <input type="text" name="cus_email" id="cus_email" placeholder="Your Email"/>
+                            <label for="name"></label>
+                            <input type="text" name="cus_name" id="cus_name" placeholder="Your Preferred Name"/>
+                            <label for="password"></label>
+                            <label for="date"><b>Date of Birth</b></label>
+                            <input type="date" name="cus_dob" id="cus_dob" placeholder="Birth Date"  class="textbox-n" type="text" onfocus="(this.type='date')" onblur="(this.type='text')"/>
+                            <input type="password" name="cus_pass" id="cus_pass" placeholder="Password"/>
+                            <label for="building"></i></label>
+                            <input type="text" name="building" id="building" placeholder="Building Number"/>
+                            <label for="street"></i></label>
+                            <input type="text" name="street" id="street" placeholder="Street"/>
+                            <label for="city"></i></label>
+                            <input type="text" name="city" id="city" placeholder="City"/>
+                            <label for="state"></i></label>
+                            <input type="text" name="state" id="state" placeholder="State"/>
+                            <label for="phone_num"></i></label>
+                            <input type="number" name="phone_num" id="phone_num" placeholder="Phone Number"/>
+                            <label for="passport_num"></i></label>
+                            <input type="text" name="passport_num" id="passport_num" placeholder="Passport Number"/>
+                            <label for="passport_country"></i></label>
+                            <input type="text" name="passport_country" id="passport_country" placeholder="Passport Country"/>
+                            <label for="passport_exp"></i></label>
+                            <label for="date"><b>Passport Expiration Date</b></label>
+                            <input placeholder="Date" name="passport_exp" class="textbox-n" type="date" onfocus="(this.type='date')" onblur="(this.type='text')"  />
+                            <!-- <input type="date" name="passport_exp" id="passport_exp"/> -->
+
+        
+                        </div>
+
+                        <!-- <div class="form-group form-button">
+                            <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                        </div> -->
+                    </div>
+                    <div id = "agent-form" style="display:none;">
+                        <div class="form-group">
+                            <label for="agent_email"></label>
+                            <input type="text" name="agent_email" id="agent_email" placeholder="Email"/>
+                            <label for="password"></label>
+                            <input type="password" name="agent_pass" id="agent_pass" placeholder="Password"/>
+                            <label for="agent_id"></label>
+                            <input type="text" name="agent_id" id="agent_id" placeholder="Agent ID"/>
+                        </div>
+                        <!-- <div class="form-group form-button">
+                            <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                        </div> -->
+                    </div>
+                    <div id = "staff-form" style="display:none;">
+                        <div class="form-group">
+                            <label for="staff_uname"></label>
+                            <input type="text" name="staff_uname" id="staff_uname" placeholder="User Name"/>
+                            <label for="password"></label>
+                            <input type="text" name="staff_pass" id="staff_pass" placeholder="Password"/>
+                            <label for="staff_first_name"></label>
+                            <input type="text" name="staff_first_name" id="staff_first_name" placeholder="First Name"/>
+                            <label for="staff_last_name"></label>
+                            <input type="text" name="staff_last_name" id="staff_last_name" placeholder="Last Name"/>
+                            
+                            <label for="staff_airline">Airline</label>
+                            <select id="selectAirline" name = staff_airline>
+                                {% for i in airline %}
+                                <option>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <label for="date"><b>Date of Birth</b></label>
+                            <input type="date" name="staff_dob" id="staff_dob" placeholder="Birth Date"/>
+                        </div>
+                        <!-- <div class="form-group form-button">
+                            <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                        </div> -->
+                    </div>
+                    <div class="form-group form-button">
+                        <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                    </div>
+                </form>
+            </div>
+            <div class="signup-image">
+                <figure><img src="./static/flight2.jpg" alt="sign up image"></figure>
+                <a href="/login" class="signup-image-link">I am already member</a>
+            </div>
+        </div>
+    </div>
+</section>
+<script >
+    // JavaScript logic to show/hide forms based on the selected option
+    const selectIdentity = document.getElementById('selectIdentity');
+    const form1 = document.getElementById('customer-form');
+    const form2 = document.getElementById('agent-form');
+    const form3 = document.getElementById('staff-form');
+    
+    // Add event listener to the select element
+    selectIdentity.addEventListener('change', function handleChange(event) {
+     
+        // Show the selected form based on the selected option
+        console.log(event.target.value);
+        if (event.target.value === 'customer') {
+        form1.style.display = 'inline';
+        form2.style.display = "none";
+        form3.style.display = "none";
+        } else if (event.target.value === 'booking_agent') {
+        form2.style.display = 'inline';
+        form1.style.display = "none";
+        form3.style.display = "none";
+        } else if (event.target.value === 'airline_staff') {
+        form3.style.display ='inline';
+        form1.style.display = "none";
+        form2.style.display = "none";
+        }
+    });
+    </script>
+<!-- <script src="{{url_for('static', filename='register_script.js')}}"></script> -->
+
+{%endblock%}

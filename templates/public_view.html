@@ -1,0 +1,85 @@
+{% extends"layout.html" %}
+
+{%block body %}
+<section class="sign-in">
+    <div class="container">
+        <div class="signin-content">
+            <div class="signin-image">
+                <!-- <figure><img src="./static/flight1.jpeg" alt="sign up image"></figure> -->
+                <div class="containertable">
+                    <table>
+                        <thead>
+                            <!-- pcc -->
+                            <tr>
+                                <th scope="col">Airline name</th>
+                                <th scope="col">Flight number</th>
+                                <th scope="col">Departure time</th>
+                                <th scope="col">Arrivel time</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Departure</th>
+                                <th scope="col">Arrival</th>
+                            </tr>
+                        </thead>
+                        <tbody>									<th scope="row" id='ugly'></th>
+                            {% for i in d %}
+                            <tr>
+                                <td>{{ i['airline_name']}}</td>
+                                <td>{{ i['flight_num']}}</td>
+                                <td>{{ i['departure_time']}}</td>
+                                <td>{{ i['arrival_time']}}</td>
+                                <td>{{ i['price']}}</td>
+                                <td>{{ i['status']}}</td>
+                                <td>{{ i['Departure']}}</td>
+                                <td>{{ i['Arrival']}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 以下pcc -->
+            <form action="/public_view" method="post">
+
+                <!--			Where from:<br>-->
+                <div class="form__group field" id='from'>
+                    <input type="input" class="form__field" placeholder="Departure"  list="list1"  autocomplete="off" name="from" />
+                    <label for="from" class="form__label">Departure</label>
+                    <datalist id="list1">
+                        {% for i in departure_city %}
+                        <option>{{ i }}</option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+                <!--			To City:<br>-->
+                <div class="form__group field"  id='to'>
+                    <input type="input" class="form__field" placeholder="Arrival"  list="list2"  autocomplete="off" name="to" />
+                    <label for="from" class="form__label">Arrival</label>
+                <datalist id="list2">
+                    {% for i in arrival_city %}
+                    <option>{{ i }}</option>
+                    {% endfor %}
+                </datalist>
+                    </div>
+                    <div class="form__group field" id='date'>
+                        <input type="date" class="form__field" placeholder="" name="date" />
+                        <label for="from" class="form__label">Departure_time</label>
+                        </div>
+
+           
+            
+
+        
+
+          
+            
+            <div class="form-group form-button">
+                <input type="submit" name="search" id="search" class="form-submit" value="Search"/>
+            </div>
+        </form>
+        </div>
+    </div>
+</section>
+
+    
+{%endblock%}

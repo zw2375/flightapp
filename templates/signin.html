@@ -1,0 +1,105 @@
+{% extends"layout.html" %}
+
+{%block body %}
+<section class="signin">
+    <div class="container">
+        <div class="signin-content">
+            <div class="signin-form">
+            <h2 class="form-title">Sign in</h2>
+            
+            <form method="POST" class="login-form" id="login-form">
+            <div class = "identity">
+                <!-- <div class="form-group"> -->
+                    <label for="selectIdentity">Sign in as:</label>
+                    <select id="selectIdentity">
+                      <option value="customer">Customer</option>
+                      <option value="booking_agent">Booking Agent</option>
+                      <option value="airline_staff">Airline Staff</option>
+                    </select>
+                  <!-- </div> -->
+            </div>
+            <div id="customer-signin-form">
+                    <div class="form-group">
+                        <label for="cus_email"></label>
+                        <input type="text" name="cus_email" id="cus_email" placeholder="Email"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="cus_pass"></label>
+                        <input type="password" name="cus_pass" id="cus_pass" placeholder="Password"/>
+                    </div>
+                
+            </div>
+
+            <div id="agent-signin-form"style="display:none;">
+                <!-- <form method="POST" class="register-form" id="login-form"> -->
+                    <div class="form-group">
+                        <label for="agent_email"></label>
+                        <input type="text" name="agent_email" id="agent_email" placeholder="Email"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="agent_pass"></label>
+                        <input type="password" name="agent_pass" id="agent_pass" placeholder="Password"/>
+                    </div>
+                <!-- </form> -->
+            </div>
+
+            <div id="staff-signin-form"style="display:none;">
+                <!-- <form method="POST" class="register-form" id="login-form"> -->
+                    <div class="form-group">
+                        <label for="staff_unamee"></label>
+                        <input type="text" name="staff_uname" id="staff_uname" placeholder="Email"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="pass"></label>
+                        <input type="password" name="staff_pass" id="staff_pass" placeholder="Password"/>
+                    </div>
+                    <label for="staff_airline">Airline</label>
+                    <select id="selectAirline" name = staff_airline>
+                        {% for i in airline %}
+                        <option>{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                <!-- </form> -->
+            </div>
+            <div class="form-group form-button">
+                <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>
+            </div>
+        </form>
+        </div>
+        <div class="signin-image">
+            <figure><img src="./static/flight1.jpeg" alt="sign up image"></figure>
+            <a href="/register" class="signup-image-link">Create an account</a>
+        </div>
+        </div>
+    </div>
+</section>
+<script >
+    // JavaScript logic to show/hide forms based on the selected option
+    const selectIdentity = document.getElementById('selectIdentity');
+    const form1 = document.getElementById('customer-signin-form');
+    const form2 = document.getElementById('agent-signin-form');
+    const form3 = document.getElementById('staff-signin-form');
+    
+    // Add event listener to the select element
+    selectIdentity.addEventListener('change', function handleChange(event) {
+     
+        // Show the selected form based on the selected option
+        console.log(event.target.value);
+        if (event.target.value === 'customer') {
+            form1.style.display = 'inline';
+            form2.style.display = "none";
+            form3.style.display = "none";
+        } else if (event.target.value === 'booking_agent') {
+            form2.style.display = 'inline';
+            form1.style.display = "none";
+            form3.style.display = "none";
+        } else if (event.target.value === 'airline_staff') {
+        form3.style.display ='inline';
+        form1.style.display = "none";
+        form2.style.display = "none";
+        }
+    });
+    </script>
+
+{%endblock%}

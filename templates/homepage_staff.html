@@ -1,0 +1,212 @@
+{% extends"layout.html" %}
+
+{%block body %}
+<div class='container'>
+    <div class='stripe-text'>Find Flight Deals</div>
+</div>
+
+<form action="/public_view" method="post">
+    <div class="form__group field" id='from'>
+        <input type="input" class="form__field" placeholder="Departure"  list="list1"  autocomplete="off" name="from"  />
+        <label for="from" class="form__label">Departure</label>
+        <datalist id="list1">
+            {% for i in departure_city %}
+            <option>{{ i }}</option>
+            {% endfor %}
+        </datalist>
+    </div>
+    <!--			To City:<br>-->
+    <div class="form__group field"  id='to'>
+        <input type="input" class="form__field" placeholder="Arrival"  list="list2"  autocomplete="off" name="to"  />
+        <label for="from" class="form__label">Arrival</label>
+    <datalist id="list2">
+        {% for i in arrival_city %}
+        <option>{{ i }}</option>
+        {% endfor %}
+    </datalist>
+        </div>
+        <div class="form__group field" id='date'>
+            <input type="date" class="form__field" placeholder="" name="date"  />
+            <label for="from" class="form__label">Departure_time</label>
+            </div>
+    <!-- <div  id = 'search'> -->
+            <button id = 'search'><input type="submit" value='Search' /id = 'ugly' class="search">Search</button>
+    <!-- </div> -->
+</form>
+
+<!-- <div class="tables"> -->
+<div class="containertable" id = 'all'>
+    All:
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Airline name</th>
+                <th scope="col">Flight number</th>
+                <th scope="col">Departure time</th>
+                <th scope="col">Arrivel time</th>
+                <th scope="col">Price</th>
+                <th scope="col">Status</th>
+                <th scope="col">Departure</th>
+                <th scope="col">Arrival</th>
+            </tr>
+        </thead>
+        <tbody>
+            <th scope="row" id='ugly'></th>
+            {% for i in all %}
+            <tr>
+                <td>{{ i['airline_name']}}</td>
+                <td>{{ i['flight_num']}}</td>
+                <td>{{ i['departure_time']}}</td>
+                <td>{{ i['arrival_time']}}</td>
+                <td>{{ i['price']}}</td>
+                <td>{{ i['status']}}</td>
+                <td>{{ i['Departure']}}</td>
+                <td>{{ i['Arrival']}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<!-- create flight -->
+<form class="d-flex" action="/sign_in/staff_home" method="POST">
+
+                <button id = 'Purchase'><input type="submit" value='Edit Flight' /id = 'ugly' class="search">Edit Flight</button>
+
+    <div class="form__group field"  id='Customer'>
+    <input type="input" class="form__field" placeholder="Flight num:" autocomplete="on" name="flight_c"  />
+    <label for="from" class="form__label">Flight num:</label>
+</div>
+
+<div class="form__group field"  id='price'>
+    <input type="input" class="form__field" placeholder="Price"  autocomplete="on" name="price"  />
+    <label for="from" class="form__label">Price: </label>
+</div>
+
+<div class="form__group field" id='depdate'>
+    <input type="date" class="form__field" placeholder="" name="depdate"  />
+    <label for="from" class="form__label">Departure_time:</label>
+    </div>
+
+    <div class="form__group field" id='arrdate'>
+        <input type="date" class="form__field" placeholder="" name="arrdate"  />
+        <label for="from" class="form__label">Arrival_time:</label>
+        </div>
+
+        <div class="form__group field" id='dep_c'>
+            <input type="input" class="form__field" placeholder="Departure"  list="list1"  autocomplete="off" name="depplace"  />
+            <label for="from" class="form__label">Departure</label>
+            <datalist id="list1">
+                {% for i in departure_city %}
+                <option>{{ i }}</option>
+                {% endfor %}
+            </datalist>
+        </div>
+        <!--			To City:<br>-->
+        <div class="form__group field"  id='arr_c'>
+            <input type="input" class="form__field" placeholder="Arrival"  list="list2"  autocomplete="off" name="arrplace"  />
+            <label for="from" class="form__label">Arrival</label>
+        <datalist id="list2">
+            {% for i in arrival_city %}
+            <option>{{ i }}</option>
+            {% endfor %}
+        </datalist>
+            </div>
+
+            <div class="form__group field"  id='plane'>
+            <input type="input" class="form__field" placeholder="Plane:" autocomplete="on" name="plane"  />
+            <label for="from" class="form__label">Plane:</label>
+        </div>
+
+        <div class="form__group field"  id='status'>
+        <input type="input" class="form__field" placeholder="Status:" autocomplete="on" name="status" />
+        <label for="from" class="form__label">Status:</label>
+
+        <div class="form__group field"  id='planeid'>
+        <input type="input" class="form__field" placeholder="Add Plane ID:" autocomplete="on" name="planeid" />
+        <label for="from" class="form__label">Add Plane ID:</label>
+    </div>
+
+    <div class="form__group field"  id='seats'>
+    <input type="input" class="form__field" placeholder="Seats" autocomplete="on" name="seats" />
+    <label for="from" class="form__label">Seats</label>
+
+</form>
+
+
+
+<!--<default view of upcoming schedule>-->
+<div class="containertable" id = 'history'>
+    Your history:
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Airline name</th>
+                <th scope="col">Flight number</th>
+                <th scope="col">Departure time</th>
+                <th scope="col">Arrivel time</th>
+                <th scope="col">Price</th>
+                <th scope="col">Status</th>
+                <th scope="col">Departure</th>
+                <th scope="col">Arrival</th>
+            </tr>
+        </thead>
+        <tbody>
+            <th scope="row" id='ugly'></th>
+            {% for i in purchased %}
+            <tr>
+                <td>{{ i['airline_name']}}</td>
+                <td>{{ i['flight_num']}}</td>
+                <td>{{ i['departure_time']}}</td>
+                <td>{{ i['arrival_time']}}</td>
+                <td>{{ i['price']}}</td>
+                <td>{{ i['status']}}</td>
+                <td>{{ i['Departure']}}</td>
+                <td>{{ i['Arrival']}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<!-- diagram -->
+{% if data_list %}
+{% set d = data_list %}
+
+
+    <div id="container" style="width: 550px; height: 400px; margin: 0 auto; display:block; background:transparent; position:absolute; left:25pt; top:500pt;"></div>
+    <script language="JavaScript">
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable({{data_list|safe}})
+            var options = {
+                title: 'Page visit per year',
+                isStacked: true,
+                                    // backgroundColor: '#E4E4E4',
+                                is3D: true,
+                                backgroundColor: {
+    fill: '#FF0000',
+    fillOpacity: 0
+  },
+            };
+            /Instantiate and draw the chart.*/
+            var chart = new google.visualization.BarChart(document.getElementById('container'));
+            chart.draw(data, options);
+        }
+        google.charts.setOnLoadCallback(drawChart);
+    </script>
+{% endif %}
+
+<!-- <div class="commission"> Total commission(Month):{{total_month}} <br>
+Average commission(Month): {{avg_month}} <br> Total commission(Year):{{total_year}} <br>
+    Average commission(Year): {{avg_year}}</div> -->
+
+{%if error%}
+<div> {{error}} </div>
+{%endif%}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+
+
+
+{%endblock%}
