@@ -168,6 +168,7 @@
 				<tbody>
 					<!-- <th scope="row" id='ugly'></th> -->
 					{% for i in all %}
+					{% if i['status'] == "Upcoming" %}
 					<tr>
 						<td>{{ i['airline_name']}}</td>
 						<td>{{ i['flight_num']}}</td>
@@ -177,18 +178,14 @@
 						<!-- <td>{{ i['status']}}</td> -->
 						<td>{{ i['Departure']}}</td>
 						<td>{{ i['Arrival']}}</td>
-						{% if i['status'] == "Upcoming" %}
 						<td><a href="#" class="btn btn-success">Upcoming</a></td>
-						{%endif%}
-						{% if i['status'] == "Finished" %}
-						<td><a href="#" class="btn btn-danger">Finished</a></td>
-						{%endif%}
 						<td>
 							<form method="post" >
 							<button type="submit" value="{{i['flight_num']}}" name = "submit_button"  class="btn btn-warning" >purchase</button>
 							</form>
 						</td>
 					</tr>
+					{%endif%}
 					{% endfor %}
 				</tbody>
 				</table>
@@ -234,6 +231,12 @@
 							{%endif%}
 							{% if i['status'] == "Finished" %}
 							<td><a href="#" class="btn btn-danger">Finished</a></td>
+							{%endif%}
+							{% if i['status'] == "Delayed" %}
+							<td><a href="#" class="btn btn-light">Delayed</a></td>
+							{%endif%}
+							{% if i['status'] == "In Progress" %}
+							<td><a href="#" class="btn btn-info">Finished</a></td>
 							{%endif%}
 							</tr>
 							{% endfor %}

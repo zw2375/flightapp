@@ -93,7 +93,16 @@ def get_flight_num(conn):
     for i in range(len(data)):
         flight_num.append(str(data[i]['flight_num']))
     return flight_num
-
+def get_all_flight_num(conn):
+    cursor = conn.cursor()
+    query = "select distinct flight_num from flight "
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    flight_num= []
+    for i in range(len(data)):
+        flight_num.append(str(data[i]['flight_num']))
+    return flight_num
 # ======== Start of purchase function
 
 def existing_ticket_id(conn):
@@ -227,7 +236,7 @@ def getting_past_year_period(year,month,day):
 def public_view(conn):
     # From query fetch all
     cursor=conn.cursor()
-    query = "select * from flight where status = \'upcoming\'"
+    query = "select * from flight "
     cursor.execute(query)
     data = cursor.fetchall()
     cursor.close()

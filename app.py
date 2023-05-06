@@ -467,16 +467,12 @@ def agent_home():
         if purchase_email is None or purchase_email == '':
             success, err = False, 'Please enter both flight num and the customer email.'
             print('executing if_clause')
+            return redirect(url_for("agent_home"))
         else:
-            print('executing else_clause')
-
             flight_num = request.form["submit_button"]
             purchase_email = request.form.get("purchase_email")
             print(purchase_email)
-            success, err = query.purchase(conn, flight_num, purchase_email, session['email'])
-        if success:
-            return redirect(url_for("agent_home"))
-        else:
+            query.purchase(conn, flight_num, purchase_email, session['email'])
             return redirect(url_for("agent_home"))
 
 @app.route("/sign_in/staff_home", methods=["POST", "GET"])
@@ -494,13 +490,14 @@ def staff_home():
     elif session["signin"] and request.method == "GET" or (session["signin"] and request.method=="POST" and request.form["submit_button"]=="clear_search"):
         data_dic = query.public_view(conn)
         locations = query.get_locations(conn)
-        
+        print(query.get_all_flight_num(conn))
         return render_template("homepage_staff.html",
                                departure_city=locations['departure_loc'],
                                arrival_city=locations['arrival_loc'],
                                all=data_dic,
                                error = session.get('createflighterror'),
                                airlines = airlines,
+                               flight_num=query.get_all_flight_num(conn),
                                cur_airline = cur_airline,
                                flight_cus = flight_cus
                                )
@@ -518,8 +515,21 @@ def staff_home():
                                error = session.get('createflighterror'),
                                airlines = airlines,
                                cur_airline = cur_airline,
-                               flight_cus = flight_cus
+                               flight_cus = flight_cus,
+                               flight_num=query.get_all_flight_num(conn),
                                )   
+    elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "modify":
+        html_get = {'flight_num': request.form.get("flight_num"),
+                    'status': request.form.get('status'),
+                    }
+        print(html_get)
+        if html_get['flight_num'] is None or html_get['flight_num']  == '':
+            success, err = False, 'Please enter both flight num and the customer email.'
+            return redirect(url_for("staff_home"))
+        else:
+            query.change_flight_status(conn,html_get['flight_num'] , html_get['status'])
+            return redirect(url_for("staff_home"))
+            
         # create_para = {
         #     'flight_num': request.form.get("flight_c"),
         #     'price': request.form.get('price'),

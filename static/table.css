@@ -2068,7 +2068,7 @@ transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-
     -webkit-transition: none;
     -o-transition: none;
     transition: none; } }
-.btn-danger, .btn-success{
+.btn-danger, .btn-success,.btn-info,.btn-light{
     pointer-events: none; 
 }
 .btn:hover {
