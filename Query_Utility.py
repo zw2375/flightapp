@@ -447,21 +447,65 @@ def view_commission_month(conn, session):
     total1 = data1[0]['total']
     avg1 = data1[0]['avg']
     return total, avg, total1, avg1
+def get_ticket_total(conn, session):
+    query = """
+        SELECT count(ticket_id) as tot_number 
+        FROM purchases
+        WHERE booking_agent_email = %s
+    """
+    cursor = conn.cursor()
+    cursor.execute(query, (session["email"],))
+    data = cursor.fetchone()
+    cursor.close()
+
+    if data is not None:
+        return data['tot_number']
+    else:
+        return 0
 
 def get_top_customer_number(conn, session):
     query = 'SELECT customer_email, count(ticket_id) as tot_number FROM purchases ' \
             'WHERE booking_agent_email = \'%s\' AND purchase_date between \'%s\' and \'%s\' ' \
-            'GROUP BY booking_agent_email ' \
+            'GROUP BY customer_email ' \
             'ORDER BY tot_number DESC limit 5;' %(session['email'], getting_past_month_period(getting_date()[0], getting_date()[1], getting_date()[2])[0],  getting_past_month_period(getting_date()[0],getting_date()[1],getting_date()[2])[1])
     # print(query)
     cursor = conn.cursor()
     cursor.execute(query)
     data = cursor.fetchall()
     data_list = [['Customer Email','# Amount']]
+    print(data)
     for i in range(len(data)):
         data_list.append([data[i]['customer_email'],data[i]['tot_number']])
     cursor.close()
-    # print(data_list)
+    return data_list
+def get_customer_commission(conn, session):
+    query = '''
+        SELECT customer_email, SUM(flight.price) as commission
+        FROM flight, ticket, purchases
+        WHERE flight.flight_num = ticket.flight_num
+            AND purchases.ticket_id = ticket.ticket_id
+            AND ticket.ticket_id IN (
+                SELECT ticket_id
+                FROM purchases
+                WHERE booking_agent_email = %s
+                    AND purchase_date BETWEEN %s AND %s
+            )
+        GROUP BY purchases.customer_email
+    '''
+    cursor = conn.cursor()
+    cursor.execute(query, (
+        session["email"],
+        getting_past_month_period(getting_date()[0], getting_date()[1], getting_date()[2])[0],
+        getting_past_month_period(getting_date()[0], getting_date()[1], getting_date()[2])[1]
+    ))
+    data = cursor.fetchall()
+    cursor.close()
+
+    data_list = [['Customer Email', '# Amount']]
+    for i in range(len(data)):
+        data_list.append([data[i]['customer_email'], int(data[i]['commission'])])
+
+    print(data_list)
     return data_list
 def get_customer_email(conn,session):
     

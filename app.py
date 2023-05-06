@@ -398,14 +398,14 @@ def agent_home():
     session['signin'] = query.sign_in_check(conn, session['email'],session["password"], 'booking_agent','')
     session["user_type"] = 'booking_agent'
     da = query.get_top_customer_number(conn,session)
-    print('datalist: ', da)
+    data_list2 = query.get_customer_commission(conn, session)
     locations = query.get_locations(conn)
     total_month = query.view_commission_month(conn, session)[0]
     avg_month = query.view_commission_month(conn, session)[1]
     total_year = query.view_commission_month(conn, session)[2]
     avg_year = query.view_commission_month(conn, session)[3]
     customer_emails = query.get_customer_email(conn, session)
-    print(customer_emails)
+    ticket_total = query.get_ticket_total(conn, session)
     if not session["signin"] and request.method == 'GET':
         session["error"] = 'Invalid username or password, please try again.'
         return redirect(url_for("sign_in"))
@@ -424,9 +424,13 @@ def agent_home():
                                 flight_num=query.get_flight_num(conn),
                                avg_year=avg_year,
                                customer_emails = customer_emails,
-                               date_list1 = da)
+                               data_list1 = da,
+                                data_list2 = data_list2,
+                                ticket_total = ticket_total
+                               )
 
     elif request.method == 'POST' and request.form["submit_button"]== "search":
+        da = query.get_top_customer_number(conn,session)
         html_get = {'from': request.form.get('from'),
                     'to': request.form.get('to'),
                     'dt': request.form.get('date'),
@@ -444,7 +448,10 @@ def agent_home():
                                 purchased=purchased_flight,
                                 flight_num=query.get_flight_num(conn),
                                 total_month=total_month,
-                                avg_month=avg_month)
+                                avg_month=avg_month,
+                                data_list1 = da,
+                                data_list2 = data_list2,
+                                ticket_total = ticket_total)
     else:
         purchase_email = request.form.get("purchase_email")
         if purchase_email is None or purchase_email == '':
@@ -455,6 +462,7 @@ def agent_home():
 
             flight_num = request.form["submit_button"]
             purchase_email = request.form.get("purchase_email")
+            print(purchase_email)
             success, err = query.purchase(conn, flight_num, purchase_email, session['email'])
         if success:
             return redirect(url_for("agent_home"))
