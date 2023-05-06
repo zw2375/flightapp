@@ -27,8 +27,9 @@
                 </select>
                   
         
-            <h2 class="form-title">Search Ticket to Purchase</h2>
+            
             <form id = "search_form"class = "purchase_form"action="/sign_in/staff_home" method="post">
+                <h2 class="form">Search Flight</h2>
                 <div class="form__group" id='from'>
                     <label for="from" class="form__label">Departure</label>
                     <input type="input" class="form__field" placeholder="Click to choose departure place"  list="list1"  autocomplete="off" name="from" />
@@ -83,8 +84,8 @@
                 
                 <a href="#info-table" class="posi_button">Click here to see information</a>
             </form>
-            
             <form id = "modify_form" class = "purchase_form"action="/sign_in/staff_home" method="post" style="display:none;">
+                <h2 class="form">Modify Flight Status</h2>
                 <div class="form__group"  id='flight_num'>
                     <label for="from" class="form__label">Flight Number:</label>
                     <input type="input" class="form__field" placeholder="Flight Number:"  list="list4"  autocomplete="off" name="flight_num" />
@@ -110,6 +111,7 @@
                 <a href="#info-table" class="posi_button">Click here to see information</a>
             </form>
             <form id = "add_flight" class = "purchase_form"action="/sign_in/staff_home" method="post" style="display:none;">
+                <h2 class="form">Add Flight</h2>
                 <div class="form__group" >
                 <label for="airline" class="form__label">Airline:</label>
                 <input type="input" class="form__field" placeholder="Choose Airline:"  list="listairline"  autocomplete="off" name="airline" />
@@ -174,6 +176,75 @@
                 </div>
                 <div class="form-group form-button">
                     <input type="submit" value='add_flight' name = "submit_button" class="search" />
+                </div>
+                <a href="#info-table" class="posi_button">Click here to see information</a>
+            </form>
+            <form id = "add_airplane" class = "purchase_form"action="/sign_in/staff_home" method="post" style="display:none;">
+                <h2 class="form">Add Airplane</h2>
+                <div class="form__group" >
+                <label for="airplane_id" class="form__label">Airplane ID:</label>
+                <input type="number" class="form__field" placeholder="Airplane ID"    autocomplete="off" name="airplane_id" />
+                </div>
+                <div class="form__group" >
+                    <label for="seats" class="form__label">Seats:</label>
+                    <input type="number" class="form__field" placeholder="Seats"    autocomplete="off" name="seats" />
+                    </div>
+                <div class="form-group form-button">
+                    <input type="submit" value='add_airplane' name = "submit_button" class="search" />
+                </div>
+                <a href="#info-table" class="posi_button">Click here to see information</a>
+            </form>
+            <form id = "add_airport" class = "purchase_form"action="/sign_in/staff_home" method="post" style="display:none;">
+                <h2 class="form">Add Airport</h2>
+                <div class="form__group" >
+                <label for="airport_name" class="form__label">Airport name:</label>
+                <input type="text" class="form__field" placeholder="Airport Name"    autocomplete="off" name="airport_name" />
+                </div>
+                <div class="form__group" >
+                    <label for="airport_city" class="form__label">Airport City</label>
+                    <input type="text" class="form__field" placeholder="Airport City"    autocomplete="off" name="airport_city" />
+                    </div>
+                <div class="form-group form-button">
+                    <input type="submit" value='add_airport' name = "submit_button" class="search" />
+                </div>
+                <a href="#info-table" class="posi_button">Click here to see information</a>
+            </form>
+            <form id = "add_agent" class = "purchase_form"action="/sign_in/staff_home" method="post" style="display:none;">
+                <h2 class="form">Add Agent</h2>
+                <div class="form-group">
+                    <label for="agent_email"></label>
+                    <input type="text" name="agent_email" id="agent_email" placeholder="Email"/>
+                    <label for="password"></label>
+                    <input type="password" name="agent_pass" id="agent_pass" placeholder="Password"/>
+                    <label for="agent_id"></label>
+                    <input type="text" name="agent_id" id="agent_id" placeholder="Agent ID"/>
+                </div>
+                <div class="form-group form-button">
+                    <input type="submit" value='add_agent' name = "submit_button" class="search" />
+                </div>
+                <a href="#info-table" class="posi_button">Click here to see information</a>
+            </form>
+            <form id = "modify_permission" class = "purchase_form"action="/sign_in/staff_home" method="post" style="display:none;">
+                <h2 class="form">Modify Staff Permission</h2>
+                <div class = "form-group">
+                    <label for="staff_uname" class="form__label">Select Staff</label>
+                    <input type="input" class="form__field" placeholder="Click to select staff"  list="all_staff"  autocomplete="off" name="staff_uname" />
+                    <datalist id="all_staff">
+                        {% for i in all_staff %}
+                        <option>{{ i['username'] }}</option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+                <div class = "form-group">
+                <label for="permission" class="form__label">Modify Permission Type</label>
+                    <input type="input" class="form__field" placeholder="Click to modify permission type"  list="permission_type"  autocomplete="off" name="permission" />
+                    <datalist id="permission_type">
+                        <option>Admin</option>
+                        <option>Operator</option>
+                    </datalist>
+                </div>
+                <div class="form-group form-button">
+                    <input type="submit" value='modify_permission' name = "submit_button" class="search" />
                 </div>
                 <a href="#info-table" class="posi_button">Click here to see information</a>
             </form>
@@ -248,41 +319,7 @@
 
 
 <!--<default view of upcoming schedule>-->
-<div class="containertable" id = 'history'>
-    Your history:
-    <table>
-        <thead>
-            <tr>
-                <th scope="col">Airline name</th>
-                <th scope="col">Flight number</th>
-                <th scope="col">Departure time</th>
-                <th scope="col">Arrivel time</th>
-                <th scope="col">Price</th>
-                <th scope="col">Status</th>
-                <th scope="col">Departure</th>
-                <th scope="col">Arrival</th>
-            </tr>
-        </thead>
-        <tbody>
-            <th scope="row" id='ugly'></th>
-            {% for i in purchased %}
-            <tr>
-                <td>{{ i['airline_name']}}</td>
-                <td>{{ i['flight_num']}}</td>
-                <td>{{ i['departure_time']}}</td>
-                <td>{{ i['arrival_time']}}</td>
-                <td>{{ i['price']}}</td>
-                <td>{{ i['status']}}</td>
-                <td>{{ i['Departure']}}</td>
-                <td>{{ i['Arrival']}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-
-<!-- diagram -->
+<!--  diagram -->
 {% if data_list %}
 {% set d = data_list %}
 
@@ -324,6 +361,11 @@ Average commission(Month): {{avg_month}} <br> Total commission(Year):{{total_yea
     const view1 = document.getElementById('search_form');
     const view2 = document.getElementById('modify_form');
     const view3 = document.getElementById('add_flight');
+    const view4 = document.getElementById('add_airplane');
+    const view5 = document.getElementById('add_airport');
+    const view6 = document.getElementById('add_agent');
+    const view7 = document.getElementById('modify_permission');
+   
     // Add event listener to the select element
     selectIdentity.addEventListener('change', function handleChange(event) {
         // Show the selected form based on the selected option
@@ -332,12 +374,51 @@ Average commission(Month): {{avg_month}} <br> Total commission(Year):{{total_yea
         view1.style.display = 'inline';
         view2.style.display = "none";
         view3.style.display = "none";
+        view4.style.display = 'none';
+        view5.style.display = 'none';
+        view6.style.display = 'none';
+        view7.style.display = 'none';
         } else if (event.target.value === 'status_modify') {
         view2.style.display = 'inline';
         view1.style.display = "none";
         }else if (event.target.value === 'flight_add') {
         view3.style.display = 'inline';
         view1.style.display = "none";
+        view4.style.display = 'none';
+        view5.style.display = 'none';
+        view6.style.display = 'none';
+        view7.style.display = 'none';
+        }else if (event.target.value === "airplane_add"){
+        view4.style.display = 'inline';
+        view1.style.display = "none";
+        view3.style.display = 'none';
+        view5.style.display = 'none';
+        view6.style.display = 'none';
+        view7.style.display = 'none';
+        }else if (event.target.value === "airport_add"){
+        view5.style.display = 'inline';
+        view1.style.display = "none";
+        view3.style.display = 'none';
+        view4.style.display = 'none';
+        view2.style.display = 'none';
+        view6.style.display = 'none';
+        view7.style.display = 'none';
+        }else if (event.target.value === "agent_add"){
+        view6.style.display = 'inline';
+        view1.style.display = "none";
+        view3.style.display = 'none';
+        view4.style.display = 'none';
+        view2.style.display = 'none';
+        view5.style.display = 'none';
+        view7.style.display = 'none';
+        }else if(event.target.value ==="permission_modify"){
+        view7.style.display = 'inline';
+        view1.style.display = "none";
+        view3.style.display = 'none';
+        view4.style.display = 'none';
+        view2.style.display = 'none';
+        view5.style.display = 'none';
+        view6.style.display = 'none';
         }
     });
 </script>

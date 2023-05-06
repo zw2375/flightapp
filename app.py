@@ -486,7 +486,8 @@ def staff_home():
     flight_cus = query.get_flight_cus(conn,session)
     locations = query.get_locations(conn)
     permission = query.get_permission(conn,session)
-    print(permission)
+    all_staff = query.get_all_staff(conn)
+    
     if not session["signin"] and request.method == 'GET':
         session["error"] = 'Invalid username or password, please try again.'
         return redirect(url_for("sign_in"))
@@ -504,7 +505,8 @@ def staff_home():
                                cur_airline = cur_airline,
                                flight_cus = flight_cus,
                                permission = permission,
-                               airplanes = airplanes
+                               airplanes = airplanes,
+                               all_staff = all_staff
                                )
     elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "search":
         html_get = {'from': request.form.get('from'),
@@ -522,7 +524,9 @@ def staff_home():
                                cur_airline = cur_airline,
                                flight_cus = flight_cus,
                                flight_num=query.get_all_flight_num(conn),
-                               permission = permission
+                               permission = permission,
+                               airplanes = airplanes,
+                               all_staff = all_staff
                                )   
     elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "modify":
         html_get = {'flight_num': request.form.get("flight_num"),
@@ -551,9 +555,37 @@ def staff_home():
         create_para['departure_time'] = create_para['departure_time'].replace("T"," ")
         query.create_flight(conn,session,create_para["flight_num"],create_para["price"],create_para["departure_time"],create_para["arrival_time"],create_para["departure"],create_para["arrival"],create_para["airplane_id"],create_para["status"],)
         return redirect(url_for("staff_home"))
-
-
-
+    elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "add_airplane":
+        create_airplane = {
+            'airline' : request.form.get("airline"),
+            'airplane_id':request.form.get("airplane_id"),
+            'seats':request.form.get("seats")
+        }
+        query.add_airplane(conn,session,create_airplane["airplane_id"],create_airplane['seats'])
+        return redirect(url_for("staff_home"))
+    elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "add_airport":
+        create_airport = {
+            'airport_name' : request.form.get("airport_name"),
+            'airport_city':request.form.get("airport_city"),
+        }
+        query.add_airport(conn,session,create_airport["airport_name"],create_airport['airport_city'])
+        return redirect(url_for("staff_home"))
+    elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "add_agent":
+        info_agent = {
+            "email": request.form.get("agent_email"),
+            "password": request.form.get("agent_pass"),
+            "booking_agent_id": request.form.get("agent_id")
+        }
+        query.add_agent(conn,info_agent["email"],info_agent["password"],info_agent["booking_agent_id"])
+        return redirect(url_for("staff_home"))
+    elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "modify_permission":
+        modified_staff = {
+            "staff_uname": request.form.get("staff_uname"),
+            "permission": request.form.get("permission")
+        }
+        
+        query.update_permission(conn,modified_staff["staff_uname"],modified_staff["permission"])
+        return redirect(url_for("staff_home"))
 
 @app.route("/sign_out", methods = ['POST','GET'])
 def sign_out():

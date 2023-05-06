@@ -628,6 +628,35 @@ def add_airplane(conn, session, airplane_id, seats):
     cursor.close()
     return True
 
+def add_airport(conn, session, airport_name, airport_city):
+    cursor = conn.cursor()
+    query = 'INSERT INTO airport VALUES (\"%s\", \"%s\");' % (airport_name, airport_city)
+    cursor.execute(query)
+    conn.commit()
+    cursor.close()
+    return True
+def add_agent(conn,agent_email,agent_pass,agent_id):
+    query = 'insert into booking_agent values' \
+            '(\'%s\',\'%s\',\'%s\')'%(agent_email,agent_pass,agent_id)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    conn.commit()
+    cursor.close()
+    return True
+def get_all_staff(conn):
+    query = """select username from airline_staff"""
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    return data
+def update_permission(conn,staff_uname,permission):
+    query = 'UPDATE permission SET permission_type = \"%s\"  WHERE username =  \"%s\"' % (permission,staff_uname)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    conn.commit()
+    cursor.close()
+    return True
 
 # End of homepage utility function
 def check_full(dic):
