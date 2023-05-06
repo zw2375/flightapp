@@ -463,8 +463,18 @@ def get_top_customer_number(conn, session):
     cursor.close()
     # print(data_list)
     return data_list
-
-
+def get_customer_email(conn,session):
+    
+    cursor = conn.cursor()
+    query = "select * from customer"
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    customer_emails = []
+    for i in range(len(data)):
+        customer_emails.append(str(data[i]['customer_email']))
+    return customer_emails
+    
 # staff
 def get_top5_number(conn):
     # need to insert time constrain using utility function

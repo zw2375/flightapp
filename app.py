@@ -387,12 +387,80 @@ def customer_home():
         else:
             print("hihihi")
             flight_num = request.form["submit_button"]
-            
             success,err = query.purchase(conn, flight_num, session['email'], 'NULL')
             if success:
                 return redirect(url_for("customer_home"))
             else:
                 return redirect(url_for("customer_home"))
+
+@app.route("/sign_in/agent_home", methods=["POST", "GET"])
+def agent_home():
+    session['signin'] = query.sign_in_check(conn, session['email'],session["password"], 'booking_agent','')
+    session["user_type"] = 'booking_agent'
+    da = query.get_top_customer_number(conn,session)
+    print('datalist: ', da)
+    locations = query.get_locations(conn)
+    total_month = query.view_commission_month(conn, session)[0]
+    avg_month = query.view_commission_month(conn, session)[1]
+    total_year = query.view_commission_month(conn, session)[2]
+    avg_year = query.view_commission_month(conn, session)[3]
+    customer_emails = query.get_customer_email(conn, session)
+    print(customer_emails)
+    if not session["signin"] and request.method == 'GET':
+        session["error"] = 'Invalid username or password, please try again.'
+        return redirect(url_for("sign_in"))
+    elif (session["signin"] and request.method == "GET") or (session["signin"] and request.method=="POST" and request.form["submit_button"]=="clear_search") :
+        data_dic = query.public_view(conn)
+        locations = query.get_locations(conn)
+        purchased_flight = query.get_purchased_flight(conn, session)
+        return render_template('homepage_booking_agent.html',
+                               departure_city=locations['departure_loc'],
+                               arrival_city=locations['arrival_loc'],
+                               all=data_dic,
+                               purchased=purchased_flight,
+                               total_month = total_month,
+                               avg_month = avg_month,
+                               total_year= total_year,
+                                flight_num=query.get_flight_num(conn),
+                               avg_year=avg_year,
+                               customer_emails = customer_emails,
+                               date_list1 = da)
+
+    elif request.method == 'POST' and request.form["submit_button"]== "search":
+        html_get = {'from': request.form.get('from'),
+                    'to': request.form.get('to'),
+                    'dt': request.form.get('date'),
+                    'flight_num': request.form.get("flight_num")
+                    }
+        data_dic = query.filter_result(conn, html_get)
+        purchased_flight = query.get_purchased_flight(conn, session)
+        flight_num = html_get["flight_num"]
+       
+        return render_template('homepage_booking_agent.html',
+                                # same results as
+                                departure_city=locations['departure_loc'],
+                                arrival_city=locations['arrival_loc'],
+                                all=data_dic,
+                                purchased=purchased_flight,
+                                flight_num=query.get_flight_num(conn),
+                                total_month=total_month,
+                                avg_month=avg_month)
+    else:
+        purchase_email = request.form.get("purchase_email")
+        if purchase_email is None or purchase_email == '':
+            success, err = False, 'Please enter both flight num and the customer email.'
+            print('executing if_clause')
+        else:
+            print('executing else_clause')
+
+            flight_num = request.form["submit_button"]
+            purchase_email = request.form.get("purchase_email")
+            success, err = query.purchase(conn, flight_num, purchase_email, session['email'])
+        if success:
+            return redirect(url_for("agent_home"))
+        else:
+            return redirect(url_for("agent_home"))
+
 
 @app.route("/sign_out", methods = ['POST','GET'])
 def sign_out():
