@@ -489,7 +489,7 @@ def get_top_customer_number(conn, session):
     cursor.execute(query)
     data = cursor.fetchall()
     data_list = [['Customer Email','# Amount']]
-    print(data)
+    # print(data)
     for i in range(len(data)):
         data_list.append([data[i]['customer_email'],data[i]['tot_number']])
     cursor.close()
@@ -521,7 +521,7 @@ def get_customer_commission(conn, session):
     for i in range(len(data)):
         data_list.append([data[i]['customer_email'], int(data[i]['commission'])])
 
-    print(data_list)
+    # print(data_list)
     return data_list
 def get_customer_email(conn,session):
     
@@ -536,6 +536,24 @@ def get_customer_email(conn,session):
     return customer_emails
     
 # staff
+def get_airplanes(conn):
+    query = 'SELECT airplane_id FROM airplane '
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    # print(data)
+    return data
+
+def get_permission(conn,session):
+    query = 'SELECT permission_type FROM permission ' \
+        'WHERE username = \'%s\'' %(session['email'])
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    return data[0]['permission_type']
+
 def get_cur_airline(conn,session):
     query = 'SELECT airline_name FROM airline_staff ' \
         'WHERE username = \'%s\'' %(session['email'])
@@ -581,11 +599,12 @@ def get_top5_number(conn):
     cursor.close()
     return data_list
 
-def create_flight(conn, session, flight_num, price, departure_time, arrival_time,departure, arrival, plane):
+def create_flight(conn, session, flight_num, price, departure_time, arrival_time,departure, arrival, plane,status):
     #insert into flight
     cursor = conn.cursor()
     query = 'insert into flight values' \
-            '(\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'Upcoming\',\'%s\')' % (session['airline_name'], flight_num,  departure, arrival, departure_time, arrival_time, price, plane)
+            '(\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\')' % (session['airline_name'], flight_num,  departure, departure_time,  arrival,arrival_time, price, status,plane)
+    print(query)
     cursor.execute(query)
     conn.commit()
     cursor.close()
@@ -613,7 +632,7 @@ def add_airplane(conn, session, airplane_id, seats):
 # End of homepage utility function
 def check_full(dic):
     for key in dic.keys():
-        print(key, dic[key])
+        # print(key, dic[key])
         if dic[key] == '' or dic[key]== None:
             return False
     return True

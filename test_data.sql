@@ -32,3 +32,8 @@ VALUES  ("China Eastern Airlines", 0001, "PVG", "2021-05-01 08:00:00", "PEK", "2
         ("China Southern Airlines", 1007, "PKX", "2021-06-01 14:00:00", "PVG", "2021-06-01 16:00:00", 3000, "Upcoming", 330200),
         ("China Southern Airlines", 1008, "PKX", "2021-06-01 15:00:00", "SHA", "2021-06-01 17:00:00", 1470, "Upcoming", 330300),
         ("China Southern Airlines", 1009, "CTU", "2021-07-22 21:30:00", "CSX", "2021-07-22 23:30:00", 1760, "Upcoming", 330300);
+INSERT INTO airline_staff
+VALUES  ("txr","txrtxr","tian","xiaorong","1998-09-09","China Eastern Airlines");
+
+INSERT INTO permission
+VALUES  ("txr","Admin");

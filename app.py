@@ -481,9 +481,12 @@ def staff_home():
     session["user_type"] = 'airline_staff'
     session['signin'] = query.sign_in_check(conn, session['email'],session["password"], 'airline_staff',session['airline_name'])
     airlines = query.get_airlines(conn)
+    airplanes = query.get_airplanes(conn)
     cur_airline = query.get_cur_airline(conn,session)
     flight_cus = query.get_flight_cus(conn,session)
     locations = query.get_locations(conn)
+    permission = query.get_permission(conn,session)
+    print(permission)
     if not session["signin"] and request.method == 'GET':
         session["error"] = 'Invalid username or password, please try again.'
         return redirect(url_for("sign_in"))
@@ -499,7 +502,9 @@ def staff_home():
                                airlines = airlines,
                                flight_num=query.get_all_flight_num(conn),
                                cur_airline = cur_airline,
-                               flight_cus = flight_cus
+                               flight_cus = flight_cus,
+                               permission = permission,
+                               airplanes = airplanes
                                )
     elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "search":
         html_get = {'from': request.form.get('from'),
@@ -517,6 +522,7 @@ def staff_home():
                                cur_airline = cur_airline,
                                flight_cus = flight_cus,
                                flight_num=query.get_all_flight_num(conn),
+                               permission = permission
                                )   
     elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "modify":
         html_get = {'flight_num': request.form.get("flight_num"),
@@ -529,37 +535,21 @@ def staff_home():
         else:
             query.change_flight_status(conn,html_get['flight_num'] , html_get['status'])
             return redirect(url_for("staff_home"))
-            
-        # create_para = {
-        #     'flight_num': request.form.get("flight_c"),
-        #     'price': request.form.get('price'),
-        #     'departure_time': request.form.get("depdate"),
-        #     'arrival_time': request.form.get('arrdate'),
-        #     'departure': request.form.get('depplace'),
-        #     'arrival': request.form.get('arrplace'),
-        #     'plane': request.form.get('plane'),
-        #     'status': request.form.get("status"),
-        #     'planeid': request.form.get("planeid"),
-        #     'seats' : request.form.get('seats')
-        # }
-
-        # if create_para['price']:
-        #     if query.create_flight(conn, session, create_para['flight_num'], create_para["price"], create_para["departure_time"],create_para['arrival_time'],create_para['departure'][-3:], create_para['arrival'][-3:], create_para['plane']):
-        #         return redirect(url_for('staff_home'))
-        #     else:
-        #         session['createflighterror'] = 'Create Flight failed'
-
-        # if create_para["status"]:
-        #     if query.change_flight_status(conn, create_para['flight_num'], create_para["status"]):
-        #         return redirect(url_for('staff_home'))
-        #     else:
-        #         session["createflighterror"] = 'Update Status failed'
-
-        # if create_para["seats"]:
-        #     if query.add_airplane(conn,session, create_para["planeid"], create_para["seats"]):
-        #         session['createflighterror'] = 'Add airplane'
-        #     else:
-        #         session["createflighterror"] = 'Update Status failed'
+    elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "add_flight":
+        create_para = {
+            'airline_name' : request.form.get("airline"),
+            'flight_num': request.form.get("flight_num"),
+            'price': request.form.get('price'),
+            'departure_time': request.form.get("from_time"),
+            'arrival_time': request.form.get('to_time'),
+            'departure': request.form.get('from')[-3:],
+            'arrival': request.form.get('to')[-3:],
+            'airplane_id': request.form.get('airplane'),
+            'status': request.form.get("status"),
+        }
+        create_para['arrival_time'] = create_para['arrival_time'].replace("T"," ")
+        create_para['departure_time'] = create_para['departure_time'].replace("T"," ")
+        query.create_flight(conn,session,create_para["flight_num"],create_para["price"],create_para["departure_time"],create_para["arrival_time"],create_para["departure"],create_para["arrival"],create_para["airplane_id"],create_para["status"],)
         return redirect(url_for("staff_home"))
 
 

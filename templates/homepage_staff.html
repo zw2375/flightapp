@@ -14,7 +14,16 @@
                 <label for="selectView">I want to  &nbsp</label>
                 <select id="selectView">
                     <option value="general">Search Flight</option>
-                    <option value="history">Modify Flight</option>
+                    {% if permission == "Operator" %}
+                    <option value="status_modify">Modify Flight</option>
+                    {% endif %}
+                    {% if permission == "Admin" %}
+                    <option value="flight_add">Add Flight</option>
+                    <option value="airplane_add">Add Airplane</option>
+                    <option value="airport_add">Add Airport</option>
+                    <option value="permission_modify">Modify Permission</option>
+                    <option value="agent_add">Add Booking Agent</option>
+                    {% endif %}
                 </select>
                   
         
@@ -55,7 +64,7 @@
                     </datalist>
                 </div>
     
-                <div class="form__group field"  id='flight_num'>
+                <div class="form__group"  id='flight_num'>
                     <label for="from" class="form__label">Flight Number:</label>
                     <input type="input" class="form__field" placeholder="Flight Number:"  list="list4"  autocomplete="off" name="flight_num" />
                     <datalist id="list4">
@@ -74,8 +83,9 @@
                 
                 <a href="#info-table" class="posi_button">Click here to see information</a>
             </form>
-            <form id = "modify_form"class = "purchase_form"action="/sign_in/staff_home" method="post" style="display:none;">
-                <div class="form__group field"  id='flight_num'>
+            
+            <form id = "modify_form" class = "purchase_form"action="/sign_in/staff_home" method="post" style="display:none;">
+                <div class="form__group"  id='flight_num'>
                     <label for="from" class="form__label">Flight Number:</label>
                     <input type="input" class="form__field" placeholder="Flight Number:"  list="list4"  autocomplete="off" name="flight_num" />
                     <datalist id="list4">
@@ -84,7 +94,7 @@
                         {% endfor %}
                     </datalist>
                 </div>
-                <div class="form__group field"  id='status'>
+                <div class="form__group"  id='status'>
                     <label for="status" class="form__label">Modify Status:</label>
                     <input type="input" class="form__field" placeholder="Choose status"  list="list5"  autocomplete="off" name="status" />
                     <datalist id="list5">
@@ -96,6 +106,74 @@
                 </div>
                 <div class="form-group form-button">
                     <input type="submit" value='modify' name = "submit_button" class="search" />
+                </div>
+                <a href="#info-table" class="posi_button">Click here to see information</a>
+            </form>
+            <form id = "add_flight" class = "purchase_form"action="/sign_in/staff_home" method="post" style="display:none;">
+                <div class="form__group" >
+                <label for="airline" class="form__label">Airline:</label>
+                <input type="input" class="form__field" placeholder="Choose Airline:"  list="listairline"  autocomplete="off" name="airline" />
+                <datalist id="listairline">
+                    {% for i in airlines %}
+                    <option>{{ i }}</option>
+                    {% endfor %}
+                </datalist>
+                </div>
+                <div class="form__group" >
+                <label for="flight_num" class="form__label">Flight Number:</label>
+                <input type="input" class="form__field" placeholder="Flight Number:"    autocomplete="off" name="flight_num" />
+                </div>
+                <div class="form__group" >
+                <label for="from" class="form__label">Departure</label>
+                <input type="input" class="form__field" placeholder="Click to choose departure place"  list="list1"  autocomplete="off" name="from" />
+                <datalist id="list1">
+                    {% for i in departure_city %}
+                    <option>{{ i }}</option>
+                    {% endfor %}
+                </datalist>
+                </div>
+                <div class="form__group" >
+                <label for="from_time" class="form__label">Departure Time</label>
+                <input type="datetime-local"  name = "from_time">
+                </div>
+                <div class="form__group" >
+                <label for="to" class="form__label">Arrival</label>
+                <input type="input" class="form__field" placeholder="Click to choose arrival place"  list="list2"  autocomplete="off" name="to"  />
+                <datalist id="list2">
+                    {% for i in arrival_city %}
+                    <option>{{ i }}</option>
+                    {% endfor %}
+                </datalist>
+                </div>
+                <div class="form__group" >
+                <label for="to_time" class="form__label">Arrival Time</label>
+                <input type="datetime-local"  name = "to_time">
+                </div>
+                <div class="form__group" >
+                <label for="price" class="form__label">Price</label>
+                <input type="number"  name = "price">
+                </div>
+                <div class="form__group" >
+                <label for="status" class="form__label">Status:</label>
+                <input type="input" class="form__field" placeholder="Choose status"  list="liststatus"  autocomplete="off" name="status" />
+                <datalist id="liststatus">
+                    <option>Upcoming</option>
+                    <option>In Progress</option>
+                    <option>Finished</option>
+                    <option>Delayed</option>
+                </datalist>
+                </div>
+                <div class="form__group" >
+                <label for="airplane" class="form__label">Airplane:</label>
+                <input type="input" class="form__field" placeholder="Choose airplane"  list="listairplane"  autocomplete="off" name="airplane" />
+                <datalist id="listairplane">
+                    {% for i in airplanes %}
+                    <option>{{ i['airplane_id'] }}</option>
+                    {% endfor %}
+                </datalist>
+                </div>
+                <div class="form-group form-button">
+                    <input type="submit" value='add_flight' name = "submit_button" class="search" />
                 </div>
                 <a href="#info-table" class="posi_button">Click here to see information</a>
             </form>
@@ -166,105 +244,6 @@
 </div>
 
 
-<!-- <div class="tables"> -->
-<div class="containertable" id = 'all'>
-    All:
-    <table>
-        <thead>
-            <tr>
-                <th scope="col">Airline name</th>
-                <th scope="col">Flight number</th>
-                <th scope="col">Departure time</th>
-                <th scope="col">Arrivel time</th>
-                <th scope="col">Price</th>
-                <th scope="col">Status</th>
-                <th scope="col">Departure</th>
-                <th scope="col">Arrival</th>
-            </tr>
-        </thead>
-        <tbody>
-            <th scope="row" id='ugly'></th>
-            {% for i in all %}
-            <tr>
-                <td>{{ i['airline_name']}}</td>
-                <td>{{ i['flight_num']}}</td>
-                <td>{{ i['departure_time']}}</td>
-                <td>{{ i['arrival_time']}}</td>
-                <td>{{ i['price']}}</td>
-                <td>{{ i['status']}}</td>
-                <td>{{ i['Departure']}}</td>
-                <td>{{ i['Arrival']}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-
-<!-- create flight -->
-<form class="d-flex" action="/sign_in/staff_home" method="POST">
-
-                <button id = 'Purchase'><input type="submit" value='Edit Flight' /id = 'ugly' class="search">Edit Flight</button>
-
-    <div class="form__group field"  id='Customer'>
-    <input type="input" class="form__field" placeholder="Flight num:" autocomplete="on" name="flight_c"  />
-    <label for="from" class="form__label">Flight num:</label>
-</div>
-
-<div class="form__group field"  id='price'>
-    <input type="input" class="form__field" placeholder="Price"  autocomplete="on" name="price"  />
-    <label for="from" class="form__label">Price: </label>
-</div>
-
-<div class="form__group field" id='depdate'>
-    <input type="date" class="form__field" placeholder="" name="depdate"  />
-    <label for="from" class="form__label">Departure_time:</label>
-    </div>
-
-    <div class="form__group field" id='arrdate'>
-        <input type="date" class="form__field" placeholder="" name="arrdate"  />
-        <label for="from" class="form__label">Arrival_time:</label>
-        </div>
-
-        <div class="form__group field" id='dep_c'>
-            <input type="input" class="form__field" placeholder="Departure"  list="list1"  autocomplete="off" name="depplace"  />
-            <label for="from" class="form__label">Departure</label>
-            <datalist id="list1">
-                {% for i in departure_city %}
-                <option>{{ i }}</option>
-                {% endfor %}
-            </datalist>
-        </div>
-        <!--			To City:<br>-->
-        <div class="form__group field"  id='arr_c'>
-            <input type="input" class="form__field" placeholder="Arrival"  list="list2"  autocomplete="off" name="arrplace"  />
-            <label for="from" class="form__label">Arrival</label>
-        <datalist id="list2">
-            {% for i in arrival_city %}
-            <option>{{ i }}</option>
-            {% endfor %}
-        </datalist>
-            </div>
-
-            <div class="form__group field"  id='plane'>
-            <input type="input" class="form__field" placeholder="Plane:" autocomplete="on" name="plane"  />
-            <label for="from" class="form__label">Plane:</label>
-        </div>
-
-        <div class="form__group field"  id='status'>
-        <input type="input" class="form__field" placeholder="Status:" autocomplete="on" name="status" />
-        <label for="from" class="form__label">Status:</label>
-
-        <div class="form__group field"  id='planeid'>
-        <input type="input" class="form__field" placeholder="Add Plane ID:" autocomplete="on" name="planeid" />
-        <label for="from" class="form__label">Add Plane ID:</label>
-    </div>
-
-    <div class="form__group field"  id='seats'>
-    <input type="input" class="form__field" placeholder="Seats" autocomplete="on" name="seats" />
-    <label for="from" class="form__label">Seats</label>
-
-</form>
 
 
 
@@ -344,6 +323,7 @@ Average commission(Month): {{avg_month}} <br> Total commission(Year):{{total_yea
     const selectIdentity = document.getElementById('selectView');
     const view1 = document.getElementById('search_form');
     const view2 = document.getElementById('modify_form');
+    const view3 = document.getElementById('add_flight');
     // Add event listener to the select element
     selectIdentity.addEventListener('change', function handleChange(event) {
         // Show the selected form based on the selected option
@@ -351,8 +331,12 @@ Average commission(Month): {{avg_month}} <br> Total commission(Year):{{total_yea
         if (event.target.value === 'general') {
         view1.style.display = 'inline';
         view2.style.display = "none";
-        } else if (event.target.value === 'history') {
+        view3.style.display = "none";
+        } else if (event.target.value === 'status_modify') {
         view2.style.display = 'inline';
+        view1.style.display = "none";
+        }else if (event.target.value === 'flight_add') {
+        view3.style.display = 'inline';
         view1.style.display = "none";
         }
     });
