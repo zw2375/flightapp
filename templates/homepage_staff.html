@@ -1,38 +1,181 @@
 {% extends"layout.html" %}
 
 {%block body %}
+<form class="d-flex" >
+
+	<a href='{{ url_for("sign_out") }}'>
+		<input type = 'button' class="btn btn-outline-success"  style="margin-right: 10pt; color = white;" value="Sign out"/>
+	</a>
+</form>
 <div class='container'>
     <div class='stripe-text'>Find Flight Deals</div>
 </div>
 
-<form action="/public_view" method="post">
-    <div class="form__group field" id='from'>
-        <input type="input" class="form__field" placeholder="Departure"  list="list1"  autocomplete="off" name="from"  />
-        <label for="from" class="form__label">Departure</label>
-        <datalist id="list1">
-            {% for i in departure_city %}
-            <option>{{ i }}</option>
-            {% endfor %}
-        </datalist>
-    </div>
-    <!--			To City:<br>-->
-    <div class="form__group field"  id='to'>
-        <input type="input" class="form__field" placeholder="Arrival"  list="list2"  autocomplete="off" name="to"  />
-        <label for="from" class="form__label">Arrival</label>
-    <datalist id="list2">
-        {% for i in arrival_city %}
-        <option>{{ i }}</option>
-        {% endfor %}
-    </datalist>
-        </div>
-        <div class="form__group field" id='date'>
-            <input type="date" class="form__field" placeholder="" name="date"  />
-            <label for="from" class="form__label">Departure_time</label>
+<div class="home-content">
+    <div class="home-form">
+        <h2 class="form-title">Search Ticket to Purchase</h2>
+        <form class = "purchase_form"action="/sign_in/staff_home" method="post">
+            <div class="form__group" id='from'>
+                <label for="from" class="form__label">Departure</label>
+                <input type="input" class="form__field" placeholder="Click to choose departure place"  list="list1"  autocomplete="off" name="from" />
+                <datalist id="list1">
+                    {% for i in departure_city %}
+                    <option>{{ i }}</option>
+                    {% endfor %}
+                </datalist>
             </div>
-    <!-- <div  id = 'search'> -->
-            <button id = 'search'><input type="submit" value='Search' /id = 'ugly' class="search">Search</button>
-    <!-- </div> -->
-</form>
+            
+            <div class="form__group"  id='to'>
+                <label for="from" class="form__label">Arrival</label>
+                <input type="input" class="form__field" placeholder="Click to choose arrival place"  list="list2"  autocomplete="off" name="to"  />
+                <datalist id="list2">
+                    {% for i in arrival_city %}
+                    <option>{{ i }}</option>
+                    {% endfor %}
+                </datalist>
+            </div>
+
+            <div class="form__group" id='date'>
+                <label for="from" class="form__label">Departure_time</label>
+                <input type="date" class="form__field" placeholder="" name="date" />
+            </div>
+
+            <div class="form__group"  id='airline'>
+                <label for="from" class="form__label">Airline Name</label>
+                <input type="input" class="form__field" placeholder="Click to choose arrival place"  list="list3"  autocomplete="off" name="airline"  />
+                <datalist id="list3">
+                    {% for i in airlines %}
+                    <option>{{ i }}</option>
+                    {% endfor %}
+                </datalist>
+            </div>
+
+            <div class="form__group field"  id='flight_num'>
+                <label for="from" class="form__label">Flight Number:</label>
+                <input type="input" class="form__field" placeholder="Flight Number:"  list="list4"  autocomplete="off" name="flight_num" />
+                <datalist id="list4">
+                    {% for i in flight_num %}
+                    <option>{{ i }}</option>
+                    {% endfor %}
+                </datalist>
+            </div>
+    
+            <div class="form-group form-button">
+                <input type="submit" value='search' name = "submit_button" class="search" />
+            </div>
+            <div class="form-group form-button">
+                <input type="submit" value='clear_search' name = "submit_button" class="search" />
+            </div>
+            
+            <a href="#info-table" class="posi_button">Click here to see information</a>
+        
+        </div>
+            <!-- <div class="commission">Total purchased ticket:{{ticket_total}}<br> Total commission(Month):{{total_month}} <br> 
+                Average commission(Month): {{avg_month}} <br> Total commission(Year):{{total_year}} <br>
+                    Average commission(Year): {{avg_year}}
+                    {% if data_list1 %}
+                    {% set d = data_list1 %}
+        
+        
+                        <div id="drawing_container" style="width: 550px; height: 400px; margin: 0 auto; display:block; background:transparent; "></div>
+                        <div id="drawing_container2" style="width: 550px; height: 400px; margin: 0 auto; display:block; background:transparent; "></div>
+                        <script language="JavaScript">
+                            google.charts.load('current', {'packages':['corechart']});
+                            function drawChart1() {
+                                    var data = google.visualization.arrayToDataTable({{data_list1|safe}})
+                                    var options = {
+                                            title: 'Top 5 customer with purchase number',
+                                            isStacked: true,
+                                                    // backgroundColor: '#E4E4E4',
+                                            is3D: true,
+                                            backgroundColor: {
+                                        fill: '#FF0000',
+                                        fillOpacity: 0
+                                    },
+                                    };
+                                    /Instantiate and draw the chart.*/
+                                    var chart = new google.visualization.BarChart(document.getElementById('drawing_container'));
+                                    chart.draw(data, options);
+                            }
+                            function drawChart2() {
+                                    var data = google.visualization.arrayToDataTable({{data_list2|safe}})
+                                    var options = {
+                                            title: 'Top 5 customer with commission',
+                                            isStacked: true,
+                                                    // backgroundColor: '#E4E4E4',
+                                            is3D: true,
+                                            backgroundColor: {
+                                        fill: '#FF0000',
+                                        fillOpacity: 0
+                                    },
+                                    };
+                                    /Instantiate and draw the chart.*/
+                                    var chart = new google.visualization.BarChart(document.getElementById('drawing_container2'));
+                                    chart.draw(data, options);
+                            }
+                            google.charts.setOnLoadCallback(drawChart1);
+                            google.charts.setOnLoadCallback(drawChart2);
+                        </script>
+                    {% endif %}
+            </div>
+             -->
+    
+
+    </div>		
+    </div>
+
+</div>
+<div class="containertable" id = 'all'>
+	All Flight:
+	<div class="row">
+		<div class="col-md-12">
+			<div class="table-wrap" id = "info-table">
+				<table class="table table-striped">
+				  <thead>
+					<tr>
+						<th scope="col">Airline name</th>
+						<th scope="col">Flight number</th>
+						<th scope="col">Departure time</th>
+						<th scope="col">Arrivel time</th>
+						<th scope="col">Price</th>
+						<th scope="col">Departure</th>
+						<th scope="col">Arrival</th>
+						<th scope="col">Status</th>
+						<th scope="col">Purchase Customers</th>
+					</tr>
+				  </thead>
+				<tbody>
+					<!-- <th scope="row" id='ugly'></th> -->
+					{% for i in all %}
+                    {% if i['airline_name']== cur_airline%}
+					<tr>
+						<td>{{ i['airline_name']}}</td>
+						<td>{{ i['flight_num']}}</td>
+						<td>{{ i['departure_time']}}</td>
+						<td>{{ i['arrival_time']}}</td>
+						<td>{{ i['price']}}</td>
+						<!-- <td>{{ i['status']}}</td> -->
+						<td>{{ i['Departure']}}</td>
+						<td>{{ i['Arrival']}}</td>
+						{% if i['status'] == "Upcoming" %}
+						<td><a href="#" class="btn btn-success">Upcoming</a></td>
+						{%endif%}
+						{% if i['status'] == "Finished" %}
+						<td><a href="#" class="btn btn-danger">Finished</a></td>
+						{%endif%}
+						<td>
+							{{flight_cus[i['flight_num']]}}
+						</td>
+					</tr>
+                    {% endif %}
+					{% endfor %}
+				</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 <!-- <div class="tables"> -->
 <div class="containertable" id = 'all'>

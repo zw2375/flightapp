@@ -375,8 +375,15 @@ def add_as(conn, session):
             '(\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\')'%(session['email'],session['password'],
                                                             session['first_name'],session['last_name'],
                                                             session['date_of_birth'],session['airline_name'],)
+    query1 = 'insert into permission values' \
+            '(\'%s\',\'%s\')'%(session['email'],session['permission_type'])
+   
     cursor = conn.cursor()
     cursor.execute(query)
+    conn.commit()
+    cursor.close()
+    cursor1 = conn.cursor()
+    cursor1.execute(query1)
     conn.commit()
     cursor.close()
     return
@@ -520,6 +527,36 @@ def get_customer_email(conn,session):
     return customer_emails
     
 # staff
+def get_cur_airline(conn,session):
+    query = 'SELECT airline_name FROM airline_staff ' \
+        'WHERE username = \'%s\'' %(session['email'])
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    return data[0]['airline_name']
+def get_flight_cus(conn, session):
+    query = """
+        SELECT customer_email, flight_num
+        FROM ticket
+        NATURAL JOIN purchases
+        GROUP BY flight_num, customer_email
+    """
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+
+    flight_data = {}
+    for row in data:
+        customer_email = row['customer_email']
+        flight_num = row['flight_num']
+        if flight_num in flight_data:
+            flight_data[flight_num].append(customer_email)
+        else:
+            flight_data[flight_num] = [customer_email]
+
+    return flight_data
 def get_top5_number(conn):
     # need to insert time constrain using utility function
     query = 'select booking_agent_email, count(*) as ct from purchases ' \

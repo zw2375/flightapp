@@ -77,8 +77,15 @@ def update_month_wise_reports(reports, month_wise):
 
 @app.route('/')
 def hello():
-    session.clear()
-    return render_template("layout.html")
+    if session.get('signin'):
+        if session['user_type'] == 'customer':
+            return redirect(url_for('customer_home'))
+        elif session['user_type'] == 'agent':
+            return redirect(url_for('agent_home'))
+        else:
+            return redirect(url_for('staff_home'))
+    else:
+        return render_template('introduction.html')
 
 @app.route('/public_view', methods = ["GET","POST"])
 def public_view():
@@ -144,8 +151,10 @@ def signin():
 
 @app.route('/register', methods=["POST", "GET"])
 def register():
+
     if request.method =='GET':
-        return render_template("register.html")
+        airlines = query.get_airlines(conn)
+        return render_template("register.html",airlines = airlines)
     if request.method == 'POST':
         info_cus = {
             "email": request.form.get("cus_email"),
@@ -173,7 +182,8 @@ def register():
             "first_name": request.form.get("staff_first_name"),
             "last_name": request.form.get("staff_last_name"),
             "date_of_birth": request.form.get("staff_dob"),
-            "airline_name": request.form.get("staff_airline")
+            "airline_name": request.form.get("staff_airline"),
+            "permission_type": request.form.get("permission")
         }
         
         if query.check_full(info_cus):
@@ -186,7 +196,7 @@ def register():
             print("success!!!")
             # return render_template("register.html")
             return redirect(url_for("register_agent"))
-        elif query.check_full(info_staff):
+        elif query.check_full(info_staff)  :
             save_to_session(info_staff)
             print("success!!!")
             # return render_template("register.html")
@@ -248,7 +258,7 @@ def sign_in():
         info_staff = {
             "username": request.form.get("staff_uname"),
             "password": request.form.get("staff_pass"),
-            "airline_name": request.form.get("airline_name")
+            "airline_name": request.form.get("staff_airline")
         }
         if query.check_full(info_cus):
             save_to_session(info_cus)
@@ -468,6 +478,81 @@ def agent_home():
             return redirect(url_for("agent_home"))
         else:
             return redirect(url_for("agent_home"))
+
+@app.route("/sign_in/staff_home", methods=["POST", "GET"])
+def staff_home():
+    session['signin'] = query.sign_in_check(conn, session['email'],session["password"], 'booking_agent',session['airline_name'])
+    session["user_type"] = 'airline_staff'
+    session['signin'] = query.sign_in_check(conn, session['email'],session["password"], 'airline_staff',session['airline_name'])
+    airlines = query.get_airlines(conn)
+    cur_airline = query.get_cur_airline(conn,session)
+    flight_cus = query.get_flight_cus(conn,session)
+    locations = query.get_locations(conn)
+    if not session["signin"] and request.method == 'GET':
+        session["error"] = 'Invalid username or password, please try again.'
+        return redirect(url_for("sign_in"))
+    elif session["signin"] and request.method == "GET" or (session["signin"] and request.method=="POST" and request.form["submit_button"]=="clear_search"):
+        data_dic = query.public_view(conn)
+        locations = query.get_locations(conn)
+        
+        return render_template("homepage_staff.html",
+                               departure_city=locations['departure_loc'],
+                               arrival_city=locations['arrival_loc'],
+                               all=data_dic,
+                               error = session.get('createflighterror'),
+                               airlines = airlines,
+                               cur_airline = cur_airline,
+                               flight_cus = flight_cus
+                               )
+    elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "search":
+        html_get = {'from': request.form.get('from'),
+                    'to': request.form.get('to'),
+                    'dt': request.form.get('date'),
+                    'flight_num': request.form.get("flight_num")
+                    }
+        data_dic = query.filter_result(conn, html_get)
+        return render_template("homepage_staff.html",
+                               departure_city=locations['departure_loc'],
+                               arrival_city=locations['arrival_loc'],
+                               all=data_dic,
+                               error = session.get('createflighterror'),
+                               airlines = airlines,
+                               cur_airline = cur_airline,
+                               flight_cus = flight_cus
+                               )   
+        # create_para = {
+        #     'flight_num': request.form.get("flight_c"),
+        #     'price': request.form.get('price'),
+        #     'departure_time': request.form.get("depdate"),
+        #     'arrival_time': request.form.get('arrdate'),
+        #     'departure': request.form.get('depplace'),
+        #     'arrival': request.form.get('arrplace'),
+        #     'plane': request.form.get('plane'),
+        #     'status': request.form.get("status"),
+        #     'planeid': request.form.get("planeid"),
+        #     'seats' : request.form.get('seats')
+        # }
+
+        # if create_para['price']:
+        #     if query.create_flight(conn, session, create_para['flight_num'], create_para["price"], create_para["departure_time"],create_para['arrival_time'],create_para['departure'][-3:], create_para['arrival'][-3:], create_para['plane']):
+        #         return redirect(url_for('staff_home'))
+        #     else:
+        #         session['createflighterror'] = 'Create Flight failed'
+
+        # if create_para["status"]:
+        #     if query.change_flight_status(conn, create_para['flight_num'], create_para["status"]):
+        #         return redirect(url_for('staff_home'))
+        #     else:
+        #         session["createflighterror"] = 'Update Status failed'
+
+        # if create_para["seats"]:
+        #     if query.add_airplane(conn,session, create_para["planeid"], create_para["seats"]):
+        #         session['createflighterror'] = 'Add airplane'
+        #     else:
+        #         session["createflighterror"] = 'Update Status failed'
+        return redirect(url_for("staff_home"))
+
+
 
 
 @app.route("/sign_out", methods = ['POST','GET'])

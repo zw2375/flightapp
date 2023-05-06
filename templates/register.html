@@ -71,19 +71,25 @@
                             <label for="staff_uname"></label>
                             <input type="text" name="staff_uname" id="staff_uname" placeholder="User Name"/>
                             <label for="password"></label>
-                            <input type="text" name="staff_pass" id="staff_pass" placeholder="Password"/>
+                            <input type="password" name="staff_pass" id="staff_pass" placeholder="Password"/>
                             <label for="staff_first_name"></label>
                             <input type="text" name="staff_first_name" id="staff_first_name" placeholder="First Name"/>
                             <label for="staff_last_name"></label>
                             <input type="text" name="staff_last_name" id="staff_last_name" placeholder="Last Name"/>
-                            
                             <label for="staff_airline">Airline</label>
-                            <select id="selectAirline" name = staff_airline>
-                                {% for i in airline %}
+                            <input type="input" class="form__field" placeholder="Airline:"  list="list1"  autocomplete="off" name="staff_airline" />
+                            <datalist id="list1">
+                                {% for i in airlines %}
                                 <option>{{ i }}</option>
                                 {% endfor %}
-                            </select>
+                            </datalist>
                             <br>
+                            <label for="staff_permission">Permission</label>
+                            <input type="input" class="form__field" placeholder="Permission:"  list="list2"  autocomplete="off" name="permission" />
+                            <datalist id="list2">
+                                <option>Admin</option>
+                                <option>Operator</option>
+                            </datalist>
                             <label for="date"><b>Date of Birth</b></label>
                             <input type="date" name="staff_dob" id="staff_dob" placeholder="Birth Date"/>
                         </div>

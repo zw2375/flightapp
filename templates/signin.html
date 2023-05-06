@@ -54,10 +54,13 @@
                         <input type="password" name="staff_pass" id="staff_pass" placeholder="Password"/>
                     </div>
                     <label for="staff_airline">Airline</label>
-                    <select id="selectAirline" name = staff_airline>
-                        {% for i in airline %}
+                    <input type="input" class="form__field" placeholder="Airline:"  list="list1"  autocomplete="off" name="staff_airline" />
+                    <datalist id="list1">
+                        {% for i in airlines %}
                         <option>{{ i }}</option>
                         {% endfor %}
+                    </datalist>
+                    
                     </select>
                     <br>
                 <!-- </form> -->
