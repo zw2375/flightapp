@@ -1,7 +1,66 @@
 {% extends"layout.html" %}
 
 {%block body %}
+<div class="container">
+	<div class="home-content">
+		<div class="home-form">
+			<h2 class="form-title">Search Ticket to Purchase</h2>
+			
+			<form class = "purchase_form"action="/public_view" method="post">
+				<div class="form__group" id='from'>
+					<label for="from" class="form__label">Departure</label>
+					<input type="input" class="form__field" placeholder="Click to choose departure place"  list="list1"  autocomplete="off" name="from" />
+					<datalist id="list1">
+						{% for i in departure_city %}
+						<option>{{ i }}</option>
+						{% endfor %}
+					</datalist>
+				</div>
+				
+				<div class="form__group"  id='to'>
+					<label for="from" class="form__label">Arrival</label>
+					<input type="input" class="form__field" placeholder="Click to choose arrival place"  list="list2"  autocomplete="off" name="to"  />
+					<datalist id="list2">
+						{% for i in arrival_city %}
+						<option>{{ i }}</option>
+						{% endfor %}
+					</datalist>
+				</div>
 
+				<div class="form__group" id='date'>
+					<label for="from" class="form__label">Departure_time</label>
+					<input type="date" class="form__field" placeholder="" name="date" />
+				</div>
+
+				<div class="form__group"  id='airline'>
+					<label for="from" class="form__label">Airline Name</label>
+					<input type="input" class="form__field" placeholder="Click to choose arrival place"  list="list3"  autocomplete="off" name="airline"  />
+					<datalist id="list3">
+						{% for i in airlines %}
+						<option>{{ i }}</option>
+						{% endfor %}
+					</datalist>
+				</div>
+
+				<div class="form__group field"  id='flight_num'>
+					<label for="from" class="form__label">Flight Number:</label>
+					<input type="input" class="form__field" placeholder="Flight Number:"  list="list4"  autocomplete="off" name="flight_num" />
+					<datalist id="list4">
+						{% for i in flight_num %}
+						<option>{{ i }}</option>
+						{% endfor %}
+					</datalist>
+					<div class="form-group form-button">
+						<input type="submit" value='search' name = "submit_button" class="search" />
+					</div>
+					<div class="form-group form-button">
+						<input type="submit" value='clear_search' name = "submit_button" class="search" />
+					</div>
+				</div>
+			</form>
+            </div>
+        </div>
+</div>
 <section class="sign-in">
     <div class="container">
         <div class="containertable" id = 'all'>

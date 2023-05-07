@@ -97,19 +97,32 @@ def public_view():
                            arrival_city = locations['arrival_loc'],
                            d = data_dic)
 
-    elif request.method == 'POST':
+    elif request.method == 'POST' and request.form["submit_button"] == "search":
         locations = query.get_locations(conn)
-        html_get = {'from':request.form['from'],
-                    'to':request.form['to'],
-                    'dt':request.form['date']}
-        print(html_get)
-        data_dic = query.filter_result(conn,html_get)
+        html_get = {'from': request.form.get('from'),
+                    'to': request.form.get('to'),
+                    'dt': request.form.get('date'),
+                    'flight_num':request.form.get("flight_num"),
+                    'airline': request.form.get("airline")}
+        data_dic = query.filter_result(conn, html_get)
+        flight_num = html_get["flight_num"]
+        return render_template('public_view.html',
+                            # same results as
+                            departure_city=locations['departure_loc'],
+                            arrival_city=locations['arrival_loc'],
+                            d=data_dic
+                            )
+        # html_get = {'from':request.form['from'],
+        #             'to':request.form['to'],
+        #             'dt':request.form['date']}
+        # print(html_get)
+        # data_dic = query.filter_result(conn,html_get)
        
-        print(data_dic)
-        return render_template("public_view.html",
-                               departure_city=locations['departure_loc'],
-                               arrival_city=locations['arrival_loc'],
-                               d=data_dic)
+        # print(data_dic)
+        # return render_template("public_view.html",
+        #                        departure_city=locations['departure_loc'],
+        #                        arrival_city=locations['arrival_loc'],
+        #                        d=data_dic)
 
 
 @app.route('/signin', methods = ["GET","POST"])
@@ -601,7 +614,18 @@ def staff_home():
                                all_airports = all_airports,
                                all_agents = all_agents,
                                all_permission =  all_permission,
-                               month_wise= month_wise
+                               month_wise=month_wise,
+                               top_agent_month = top_agent_month,
+                                top_agent_year = top_agent_year,
+                                top_agent_commission= top_agent_commission,
+                                top_cus =top_cus,
+                                cus_info = cus_info,
+                                top_des_year = top_des_year,
+                                top_des_three = top_des_three,
+                                direct_sales_month  = direct_sales_month,
+                                indirect_sales_month = indirect_sales_month,
+                                direct_sales_year = direct_sales_year,
+                                indirect_sales_year = indirect_sales_year
                             #    top_three_month= top_three_month,
                             #    top_last_year= top_last_year
                                )
@@ -620,15 +644,25 @@ def staff_home():
                                airlines = airlines,
                                cur_airline = cur_airline,
                                flight_cus = flight_cus,
-                               flight_num=query.get_all_flight_num(conn),
                                permission = permission,
                                airplanes = airplanes,
                                all_staff = all_staff,
                                all_airplanes = all_airplanes,
                                all_airports = all_airports,
                                all_agents = all_agents,
-                               all_permission =all_permission,
-                               month_wise=month_wise
+                               all_permission =  all_permission,
+                               month_wise=month_wise,
+                               top_agent_month = top_agent_month,
+                                top_agent_year = top_agent_year,
+                                top_agent_commission= top_agent_commission,
+                                top_cus =top_cus,
+                                cus_info = cus_info,
+                                top_des_year = top_des_year,
+                                top_des_three = top_des_three,
+                                direct_sales_month  = direct_sales_month,
+                                indirect_sales_month = indirect_sales_month,
+                                direct_sales_year = direct_sales_year,
+                                indirect_sales_year = indirect_sales_year
                                )   
     elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "modify":
         html_get = {'flight_num': request.form.get("flight_num"),
