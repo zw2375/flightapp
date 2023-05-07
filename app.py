@@ -481,13 +481,16 @@ def staff_home():
     session["user_type"] = 'airline_staff'
     session['signin'] = query.sign_in_check(conn, session['email'],session["password"], 'airline_staff',session['airline_name'])
     airlines = query.get_airlines(conn)
-    airplanes = query.get_airplanes(conn)
+    airplanes = query.get_airplanes_id(conn)
+    all_airplanes = query.get_airplanes(conn)
     cur_airline = query.get_cur_airline(conn,session)
     flight_cus = query.get_flight_cus(conn,session)
     locations = query.get_locations(conn)
     permission = query.get_permission(conn,session)
     all_staff = query.get_all_staff(conn)
-    
+    all_airports = query.get_all_airports(conn)
+    all_agents = query.get_all_agents(conn)
+    all_permission = query.get_all_permission(conn,session)
     if not session["signin"] and request.method == 'GET':
         session["error"] = 'Invalid username or password, please try again.'
         return redirect(url_for("sign_in"))
@@ -506,7 +509,11 @@ def staff_home():
                                flight_cus = flight_cus,
                                permission = permission,
                                airplanes = airplanes,
-                               all_staff = all_staff
+                               all_staff = all_staff,
+                               all_airplanes = all_airplanes,
+                               all_airports = all_airports,
+                               all_agents = all_agents,
+                               all_permission =  all_permission
                                )
     elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "search":
         html_get = {'from': request.form.get('from'),
@@ -526,7 +533,11 @@ def staff_home():
                                flight_num=query.get_all_flight_num(conn),
                                permission = permission,
                                airplanes = airplanes,
-                               all_staff = all_staff
+                               all_staff = all_staff,
+                               all_airplanes = all_airplanes,
+                               all_airports = all_airports,
+                               all_agents = all_agents,
+                               all_permission =all_permission
                                )   
     elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "modify":
         html_get = {'flight_num': request.form.get("flight_num"),

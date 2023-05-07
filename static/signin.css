@@ -463,6 +463,13 @@ label.valid {
 
 
 /*# sourceMappingURL=style.css.map */
+.staff_form{
+  width: 90%;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-bottom: 10%;
+  /* align-self: center; */
+}
 .purchase_form{
   width: 60%;
   margin-left: 10%;
@@ -470,6 +477,7 @@ label.valid {
   margin-bottom: 10%;
   /* align-self: center; */
 }
+
 
 #spending_drawing{
   width:50%;

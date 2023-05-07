@@ -536,7 +536,7 @@ def get_customer_email(conn,session):
     return customer_emails
     
 # staff
-def get_airplanes(conn):
+def get_airplanes_id(conn):
     query = 'SELECT airplane_id FROM airplane '
     cursor = conn.cursor()
     cursor.execute(query)
@@ -545,6 +545,29 @@ def get_airplanes(conn):
     # print(data)
     return data
 
+def get_airplanes(conn):
+    query = 'SELECT * FROM airplane '
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    # print(data)
+    return data
+
+def get_all_airports(conn):
+    query = 'SELECT * FROM airport'
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    return data
+def get_all_agents(conn):
+    query = 'SELECT * FROM booking_agent'
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    return data
 def get_permission(conn,session):
     query = 'SELECT permission_type FROM permission ' \
         'WHERE username = \'%s\'' %(session['email'])
@@ -553,6 +576,14 @@ def get_permission(conn,session):
     data = cursor.fetchall()
     cursor.close()
     return data[0]['permission_type']
+
+def get_all_permission(conn,session):
+    query = 'SELECT * FROM permission '
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    return data
 
 def get_cur_airline(conn,session):
     query = 'SELECT airline_name FROM airline_staff ' \
