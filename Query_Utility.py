@@ -1,6 +1,6 @@
 import pymysql
 # import hashlib
-import datetime
+from datetime import datetime, timedelta
 import time
 from flask import Flask, render_template, request, session, redirect, url_for
 import pprint
@@ -598,7 +598,7 @@ def get_top_destinations(conn, start_date, end_date, airline_name):
 
     # conn.commit()
     cursor.close()
-    print(data)
+    # print(data)
     for i in range(len(data)):
         data[i] = list(data[i])
     return data
@@ -661,7 +661,7 @@ def create_flight(conn, session, flight_num, price, departure_time, arrival_time
     cursor = conn.cursor()
     query = 'insert into flight values' \
             '(\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\')' % (session['airline_name'], flight_num,  departure, departure_time,  arrival,arrival_time, price, status,plane)
-    print(query)
+    # print(query)
     cursor.execute(query)
     conn.commit()
     cursor.close()
@@ -722,18 +722,102 @@ def view_reports(conn, airline_name, start_date, end_date):
     cursor.execute(query, (airline_name, start_date, end_date))
     data = cursor.fetchall()
     cursor.close()
-    print(data)
+    # print(data)
     for i in range(len(data)):
         data[i] = [data[i][k] for k in ['ticket_id', 'purchase_date']]
         data[i][1] = data[i][1].strftime("%Y-%m-%d")
         data[i][0] = str(data[i][1])
-        # data[i]['purchase_date'] = data[i]['purchase_date'].strftime("%Y-%m-%d")
-    print(data)
-    # for i in range(len(data)):
-    # data[i] = [data[i][k] for k in ['purchase_date', 'price']]
-    # data[i][0] = data[i][0].strftime("%Y-%m-%d")
-    # data[i][1] = int(data[i][1])
+       
+    # print(data)
+
     return data
+
+def view_booking_agents(conn, airline_name):
+    PAST_MONTH = (datetime.today() - timedelta(days=31)).strftime("%Y-%m-%d")
+    PAST_YEAR = (datetime.today() - timedelta(days=365)).strftime("%Y-%m-%d")
+    cursor = conn.cursor()
+    view_query1 = """SELECT booking_agent_email, COUNT(ticket_id) AS num_of_ticket
+                        FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight
+                        WHERE purchase_date >= \'%s\' AND airline_name = \'%s\'
+                        GROUP BY booking_agent_email
+                        order by num_of_ticket DESC limit 5
+                   """
+    cursor.execute(view_query1 % (PAST_MONTH, airline_name))
+    top_agent_month = cursor.fetchall()
+    cursor.close()
+    cursor = conn.cursor()
+    view_query2 = """SELECT booking_agent_email, COUNT(ticket_id) AS num_of_ticket
+                        FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight
+                        WHERE purchase_date >= \'%s\' AND airline_name = \'%s\'
+                        GROUP BY booking_agent_email
+                        order by num_of_ticket DESC limit 5
+                   """
+    cursor.execute(view_query2 % (PAST_YEAR, airline_name))
+    top_agent_year = cursor.fetchall()
+    cursor.close()
+
+    cursor = conn.cursor()
+    view_query3 = """SELECT booking_agent_email, SUM(flight.price) as commission
+                        FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight
+                        WHERE purchase_date >= \'%s\' AND airline_name = \'%s\'
+                        GROUP BY booking_agent_email
+                        order by commission DESC limit 5
+                   """
+    cursor.execute(view_query3 % (PAST_YEAR, airline_name))
+    top_agent_commission = cursor.fetchall()
+    cursor.close()
+
+    return top_agent_month,top_agent_year,top_agent_commission
+    # cursor = conn.cursor()
+    # view_query1 = """CREATE OR REPLACE VIEW top_agents_ticket AS (
+    #                     SELECT email, COUNT(ticket_id) AS num_of_ticket
+    #                     FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight
+    #                     WHERE purchase_date >= \'%s\' AND airline_name = \'%s\'
+    #                     GROUP BY email
+    #                )"""
+    # cursor.execute(view_query1 % (PAST_MONTH, airline_name))
+    # # cursor.callproc("GetTopAgentsTicket")
+    # cursor.callproc("GetTopFiveAgentsTicket")
+    # ticket_month = []
+    # for result in cursor.stored_results():
+    #     ticket_month = result.fetchall()
+
+    # cursor.execute(view_query1 % (PAST_YEAR, airline_name))
+    # # cursor.callproc("GetTopAgentsTicket")
+    # cursor.callproc("GetTopFiveAgentsTicket")
+    # ticket_year = []
+    # for result in cursor.stored_results():
+    #     ticket_year = result.fetchall()
+
+    # view_query2 = """CREATE OR REPLACE VIEW top_agents_commission AS (
+    #                     SELECT email, SUM(price * 0.1) AS amount_of_commission
+    #                     FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight
+    #                     WHERE purchase_date >= \'%s\' AND airline_name = \'%s\'
+    #                     GROUP BY email
+    #                )"""
+    # cursor.execute(view_query2 % (PAST_YEAR, airline_name))
+    # cursor.callproc("GetTopAgentsCommission")
+    # commission_year = []
+    # for result in cursor.stored_results():
+    #     commission_year = result.fetchall()
+    # cursor.close()
+
+    # for i in range(len(ticket_month)):
+    #     ticket_month[i] = list(ticket_month[i])
+    #     ticket_month[i][1] = int(ticket_month[i][1])
+    # for i in range(len(ticket_year)):
+    #     ticket_year[i] = list(ticket_month[i])
+    #     ticket_year[i][1] = int(ticket_year[i][1])
+    # for i in range(len(commission_year)):
+    #     commission_year[i] = list(commission_year[i])
+    #     if commission_year[i][1]:
+    #         commission_year[i][1] = float(commission_year[i][1])
+    #     else:
+    #         commission_year[i][1] = 0
+
+    # return ticket_month, ticket_year, commission_year
+
+
 
 # End of homepage utility function
 def check_full(dic):

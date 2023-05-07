@@ -552,46 +552,60 @@
                 </div>
             </div>
             </div>
+            <div class="table-container">
+                <section>
+                  <form action="/sign_in/staff_home" onsubmit="return formValidation()" autocomplete="off" method="POST">
+                    <div class="bluebutton">
+                        <div class="smaller-date-container">
+                            <label class="label">Start date</label>             
+                            <input type="date" name = "start_date">
+                        </div>
+                        <div class="smaller-date-container">
+                            <label class="label">End date</label>             
+                            <input type="date" name = "end_date">
+                        </div>
+                        <div class="smaller-date-container">
+                          <input type="submit" name = "submit_button" value = "date_filter">
+                            <!-- <button class="datebutton" onclick="submitdate()">Filter</button> -->
+                        </div>
+                    </div>
+                  </form>
+                </section>
+      <!-- <<<<<<< Updated upstream -->
+                <!-- <table id="exa"> -->
+                    <!-- <thead style="display: table-header-group;"></thead> -->
+      <!-- ======= -->
+                <!-- <table id="exa" class="table">
+                    <thead style="display: table-header-group;"></tfoot       > -->
+      <!-- >>>>>>> Stashed changes -->
+                </table>
+              </br>
+        
+        
+            </br>
+            </div>  
+        <div id="chart_div"></div>
+        <div class="top_agents">
+            Top agents (ticket) in the past month:<br> 
+            {% for i in top_agent_month %}
+            <p>{{i["booking_agent_email"]}} : sold {{i["num_of_ticket"]}} tickets</p>
+            {% endfor %}
+            Top agents(ticket) in the past year:<br> 
+            {% for i in top_agent_year %}
+            <p>{{i["booking_agent_email"]}} : sold {{i["num_of_ticket"]}} tickets </p>
+            {% endfor %}
+            Top agents(commission) in the past year:
+            {% for i in top_agent_commission %}
+            <p>{{i["booking_agent_email"]}} : {{i["commission"]}}  </p>
+            {% endfor %}
+        </div>
         </div>
         </div>		
         </div>
     
-        <div class="table-container">
-            <section>
-              <form action="/sign_in/staff_home" onsubmit="return formValidation()" autocomplete="off" method="POST">
-                <div class="bluebutton">
-                    <div class="smaller-date-container">
-                        <label class="label">Start date</label>             
-                        <input type="date" name = "start_date">
-                    </div>
-                    <div class="smaller-date-container">
-                        <label class="label">End date</label>             
-                        <input type="date" name = "end_date">
-                    </div>
-                    <div class="smaller-date-container">
-                      <input type="submit" name = "submit_button" value = "date_filter">
-                        <!-- <button class="datebutton" onclick="submitdate()">Filter</button> -->
-                    </div>
-                </div>
-              </form>
-            </section>
-  <!-- <<<<<<< Updated upstream -->
-            <!-- <table id="exa"> -->
-                <!-- <thead style="display: table-header-group;"></thead> -->
-  <!-- ======= -->
-            <!-- <table id="exa" class="table">
-                <thead style="display: table-header-group;"></tfoot       > -->
-  <!-- >>>>>>> Stashed changes -->
-            </table>
-          </br>
-    
-    
-        </br>
-        </div>  
-</div>
-<div id="chart_div"></div>
 
-</div>
+</div>  
+
 
 
 

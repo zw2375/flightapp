@@ -522,11 +522,13 @@ def staff_home():
         reports = query.view_reports(conn,cur_airline, month_wise[-1][0], TODAY.strftime("%Y-%m-%d"))
         month_wise.sort()
         update_month_wise_reports(reports, month_wise)
-
+        top_agent_month, top_agent_year,top_agent_commission = query.view_booking_agents(conn, cur_airline)
+        # print("ticket_month",ticket_month)
+        # print("ticket_year", ticket_year)
+        # print("commission_year",commission_year)
         # update_month_wise_reports(reports_previous, month_wise)
         data_dic = query.public_view(conn)
         locations = query.get_locations(conn)
-        print(query.get_all_flight_num(conn))
         return render_template("homepage_staff.html",
                                departure_city=locations['departure_loc'],
                                arrival_city=locations['arrival_loc'],
@@ -543,7 +545,10 @@ def staff_home():
                                all_airports = all_airports,
                                all_agents = all_agents,
                                all_permission =  all_permission,
-                               month_wise=month_wise
+                               month_wise=month_wise,
+                               top_agent_month = top_agent_month,
+                                top_agent_year = top_agent_year,
+                                top_agent_commission= top_agent_commission
                             #    reports_current=reports_current,
                             #    reports_previous =reports_previous
                             #    top_three_month= top_three_month,
@@ -613,7 +618,6 @@ def staff_home():
         html_get = {'flight_num': request.form.get("flight_num"),
                     'status': request.form.get('status'),
                     }
-        print(html_get)
         if html_get['flight_num'] is None or html_get['flight_num']  == '':
             success, err = False, 'Please enter both flight num and the customer email.'
             return redirect(url_for("staff_home"))
