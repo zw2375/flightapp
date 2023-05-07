@@ -576,6 +576,32 @@ def get_permission(conn,session):
     data = cursor.fetchall()
     cursor.close()
     return data[0]['permission_type']
+def get_top_destinations(conn, start_date, end_date, airline_name):
+    cursor = conn.cursor()
+    query = """CREATE OR REPLACE VIEW top_destinations AS (
+                    SELECT DST.airport_city AS dst, COUNT(ticket_id) AS num_of_purchase
+                    FROM flight AS F JOIN airport AS DST ON (F.arrival_airport = DST.airport_name) 
+                        NATURAL JOIN purchases NATURAL JOIN ticket
+                    WHERE airline_name = \'%s\' AND purchase_date BETWEEN \'%s\' AND \'%s\'
+                    GROUP BY dst 
+            ) 
+            """
+    # print(query % (airline_name, start_date, end_date))
+    cursor.execute(query % (airline_name, start_date, end_date))
+    conn.commit()
+    # cursor.callproc("GetTopDestination")
+
+    # cursor.callproc("GetTopThreeDestination")
+    data = []
+    # for result in cursor.stored_results():
+    #     data = result.fetchall()
+
+    # conn.commit()
+    cursor.close()
+    print(data)
+    for i in range(len(data)):
+        data[i] = list(data[i])
+    return data
 
 def get_all_permission(conn,session):
     query = 'SELECT * FROM permission '
@@ -688,6 +714,26 @@ def update_permission(conn,staff_uname,permission):
     conn.commit()
     cursor.close()
     return True
+def view_reports(conn, airline_name, start_date, end_date):
+    cursor = conn.cursor()
+    query = """SELECT ticket_id, purchase_date
+               FROM purchases NATURAL JOIN ticket
+               WHERE airline_name = %s AND purchase_date BETWEEN %s AND %s"""
+    cursor.execute(query, (airline_name, start_date, end_date))
+    data = cursor.fetchall()
+    cursor.close()
+    print(data)
+    for i in range(len(data)):
+        data[i] = [data[i][k] for k in ['ticket_id', 'purchase_date']]
+        data[i][1] = data[i][1].strftime("%Y-%m-%d")
+        data[i][0] = str(data[i][1])
+        # data[i]['purchase_date'] = data[i]['purchase_date'].strftime("%Y-%m-%d")
+    print(data)
+    # for i in range(len(data)):
+    # data[i] = [data[i][k] for k in ['purchase_date', 'price']]
+    # data[i][0] = data[i][0].strftime("%Y-%m-%d")
+    # data[i][1] = int(data[i][1])
+    return data
 
 # End of homepage utility function
 def check_full(dic):

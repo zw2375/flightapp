@@ -491,10 +491,39 @@ def staff_home():
     all_airports = query.get_all_airports(conn)
     all_agents = query.get_all_agents(conn)
     all_permission = query.get_all_permission(conn,session)
+    month_wise = []
+    
+    # TODAY = datetime.today()
+    # LAST_3_MONTH = TODAY - timedelta(days=30 * 3)
+    # LAST_YEAR = TODAY - timedelta(days=365)
+
+    # top_three_month = query.get_top_destinations(conn, LAST_3_MONTH.strftime("%Y-%m-%d"),
+    #                                                 TODAY.strftime("%Y-%m-%d"), cur_airline)
+    # top_last_year = query.get_top_destinations(conn, LAST_YEAR.strftime("%Y-%m-%d"), TODAY.strftime("%Y-%m-%d"),
+    #                                                 cur_airline)
     if not session["signin"] and request.method == 'GET':
         session["error"] = 'Invalid username or password, please try again.'
         return redirect(url_for("sign_in"))
     elif session["signin"] and request.method == "GET" or (session["signin"] and request.method=="POST" and request.form["submit_button"]=="clear_search"):
+        TODAY = datetime.today()
+        THIS_YEAR, PAST_YEAR, THIS_MONTH = TODAY.year, TODAY.year - 1, TODAY.month
+        month_wise.append(["%d-%02d-01" % (THIS_YEAR, THIS_MONTH), TODAY.strftime("%Y-%m-%d"), 0])
+        for i in range(1, 6):
+            if THIS_MONTH - i > 0:
+                temp = ["%d-%02d-01" % (THIS_YEAR, THIS_MONTH - i), "%d-%02d-01" % (THIS_YEAR, THIS_MONTH - i + 1), 0]
+            elif THIS_MONTH - i + 1 > 0:
+                temp = ["%d-%02d-01" % (PAST_YEAR, 12 + (THIS_MONTH - i)),
+                        "%d-%02d-01" % (THIS_YEAR, THIS_MONTH - i + 1), 0]
+            else:
+                temp = ["%d-%02d-01" % (PAST_YEAR, 12 + (THIS_MONTH - i)),
+                        "%d-%02d-01" % (THIS_YEAR, 12 + (THIS_MONTH - i + 1)), 0]
+            month_wise.append(temp)
+
+        reports = query.view_reports(conn,cur_airline, month_wise[-1][0], TODAY.strftime("%Y-%m-%d"))
+        month_wise.sort()
+        update_month_wise_reports(reports, month_wise)
+
+        # update_month_wise_reports(reports_previous, month_wise)
         data_dic = query.public_view(conn)
         locations = query.get_locations(conn)
         print(query.get_all_flight_num(conn))
@@ -513,7 +542,45 @@ def staff_home():
                                all_airplanes = all_airplanes,
                                all_airports = all_airports,
                                all_agents = all_agents,
-                               all_permission =  all_permission
+                               all_permission =  all_permission,
+                               month_wise=month_wise
+                            #    reports_current=reports_current,
+                            #    reports_previous =reports_previous
+                            #    top_three_month= top_three_month,
+                            #    top_last_year= top_last_year
+                               )
+    elif session['signin'] and request.method == "POST" and request.form["submit_button"] == "date_filter":
+        start_date = request.form["start_date"]
+        end_date = request.form["end_date"]
+        data_dic = query.public_view(conn)
+        locations = query.get_locations(conn)
+        # print(start_date, end_date)
+        start_year, start_month = int(start_date[:4]), int(start_date[5:7])
+        end_year, end_month = int(end_date[:4]), int(end_date[5:7])
+
+        get_each_month(month_wise, start_year, start_month, end_year, end_month, start_date, end_date)
+
+        reports = query.view_reports(conn,cur_airline, start_date, end_date)
+        update_month_wise_reports(reports, month_wise)
+        return render_template("homepage_staff.html",
+                               departure_city=locations['departure_loc'],
+                               arrival_city=locations['arrival_loc'],
+                               all=data_dic,
+                               error = session.get('createflighterror'),
+                               airlines = airlines,
+                               flight_num=query.get_all_flight_num(conn),
+                               cur_airline = cur_airline,
+                               flight_cus = flight_cus,
+                               permission = permission,
+                               airplanes = airplanes,
+                               all_staff = all_staff,
+                               all_airplanes = all_airplanes,
+                               all_airports = all_airports,
+                               all_agents = all_agents,
+                               all_permission =  all_permission,
+                               month_wise= month_wise
+                            #    top_three_month= top_three_month,
+                            #    top_last_year= top_last_year
                                )
     elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "search":
         html_get = {'from': request.form.get('from'),
@@ -537,7 +604,10 @@ def staff_home():
                                all_airplanes = all_airplanes,
                                all_airports = all_airports,
                                all_agents = all_agents,
-                               all_permission =all_permission
+                               all_permission =all_permission,
+                               month_wise=month_wise
+                            #    top_three_month=top_three_month,
+                            #    top_last_year=top_last_year
                                )   
     elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "modify":
         html_get = {'flight_num': request.form.get("flight_num"),
