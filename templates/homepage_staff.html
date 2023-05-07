@@ -620,6 +620,8 @@
             <p>{{i["dst"]}} : {{i["num_of_purchase"]}}</p>
             {% endfor %}
         </div>
+        <div id="pie_chart1"></div>
+        <div id="pie_chart2"></div>
         </div>
         </div>		
         </div>
@@ -646,7 +648,8 @@ Average commission(Month): {{avg_month}} <br> Total commission(Year):{{total_yea
 
     // Set a callback to run when the Google Visualization API is loaded.
     google.charts.setOnLoadCallback(drawChart);
-
+    google.charts.setOnLoadCallback(drawChart1);
+    google.charts.setOnLoadCallback(drawChart2);
     // Callback that creates and populates a data table,
     // instantiates the pie chart, passes in the data and
     // draws it.
@@ -680,7 +683,51 @@ Average commission(Month): {{avg_month}} <br> Total commission(Year):{{total_yea
       var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
       chart.draw(data, options);
     }
-    
+    function drawChart1() {
+        let info = {{direct_sales_month | safe}}
+        let info2 = {{indirect_sales_month | safe}}
+
+        var data = google.visualization.arrayToDataTable([
+            ['string', 'number'],
+            ['direct sales without booking agent', info[0]],
+            ['indirect sales with booking agent', info2[0]]]
+        );
+
+
+        // Set chart options
+        var options = {
+            title: 'Comparison of revenue earned last month: ',
+            height: 350,
+            pieSliceText: 'percentage'
+            };
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.PieChart(document.getElementById('pie_chart1'));
+        chart.draw(data, options);
+    }
+
+    function drawChart2() {
+    let info = {{direct_sales_year | safe}}
+    let info2 = {{indirect_sales_year | safe}}
+
+    var data = google.visualization.arrayToDataTable([
+        ['string', 'number'],
+        ['direct sales without booking agent', info[0]],
+        ['indirect sales with booking agent', info2[0]]]
+    );
+
+
+    // Set chart options
+    var options = {
+        title: 'Comparison of revenue earned last year: ',
+        height: 350,
+        pieSliceText: 'percentage'
+        };
+
+    // Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.PieChart(document.getElementById('pie_chart2'));
+    chart.draw(data, options);
+    }
   </script>
 
 <script >
@@ -750,5 +797,52 @@ Average commission(Month): {{avg_month}} <br> Total commission(Year):{{total_yea
         }
     });
 </script>
+<!-- <script>
+    google.charts.load('current', {'packages':['corechart']});
+    function drawChart1() {
+    let info = {{direct_sales_month | safe}}
+    let info2 = {{indirect_sales_month | safe}}
 
+    var data = google.visualization.arrayToDataTable([
+        ['string', 'number'],
+        ['direct sales without booking agent', info[0][0]],
+        ['indirect sales with booking agent', info2[0][0]]]
+    );
+
+
+    // Set chart options
+    var options = {
+        title: 'Comparison of revenue earned last month: ',
+        height: 350,
+        pieSliceText: 'percentage'
+        };
+
+    // Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.PieChart(document.getElementById('pie_chart1'));
+    chart.draw(data, options);
+    }
+
+    function drawChart2() {
+    let info = {{direct_sales_year | safe}}
+    let info2 = {{indirect_sales_year | safe}}
+
+    var data = google.visualization.arrayToDataTable([
+        ['string', 'number'],
+        ['direct sales without booking agent', info[0][0]],
+        ['indirect sales with booking agent', info2[0][0]]]
+    );
+
+
+    // Set chart options
+    var options = {
+        title: 'Comparison of revenue earned last year: ',
+        height: 350,
+        pieSliceText: 'percentage'
+        };
+
+    // Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.PieChart(document.getElementById('pie_chart2'));
+    chart.draw(data, options);
+    }
+</script> -->
 {%endblock%}

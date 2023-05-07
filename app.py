@@ -477,6 +477,12 @@ def agent_home():
 
 @app.route("/sign_in/staff_home", methods=["POST", "GET"])
 def staff_home():
+    TODAY = datetime.today()
+    THIS_YEAR, THIS_MONTH = TODAY.year, TODAY.month 
+    LAST_3_MONTH = TODAY - timedelta(days=30 * 3)
+    PAST_YEAR = THIS_YEAR -1
+    LAST_YEAR = TODAY - timedelta(days=365)
+    LAST_MONTH = TODAY - timedelta(days=30)
     session['signin'] = query.sign_in_check(conn, session['email'],session["password"], 'booking_agent',session['airline_name'])
     session["user_type"] = 'airline_staff'
     session['signin'] = query.sign_in_check(conn, session['email'],session["password"], 'airline_staff',session['airline_name'])
@@ -492,16 +498,28 @@ def staff_home():
     all_agents = query.get_all_agents(conn)
     all_permission = query.get_all_permission(conn,session)
     month_wise = []
-    
+    top_agent_month, top_agent_year,top_agent_commission = query.view_booking_agents(conn, cur_airline)
+    top_cus = query.get_frequent_cus(conn, cur_airline)
+    cus_info = query.get_cus_info(conn,cur_airline)
+    top_des_three = query.get_top_destinations(conn, LAST_3_MONTH.strftime("%Y-%m-%d"),
+                                                    TODAY.strftime("%Y-%m-%d"), cur_airline)
+    top_des_year = query.get_top_destinations(conn, LAST_YEAR.strftime("%Y-%m-%d"), TODAY.strftime("%Y-%m-%d"),
+                                                    cur_airline)
+    # top_des = query.get_top_destinations()
+    direct_sales_month = query.get_airline_sales(conn, LAST_MONTH.strftime("%Y-%m-%d"),
+                                                    TODAY.strftime("%Y-%m-%d"), cur_airline, "direct")
+    indirect_sales_month = query.get_airline_sales(conn, LAST_MONTH.strftime("%Y-%m-%d"),
+                                                        TODAY.strftime("%Y-%m-%d"), cur_airline, "indirect")
+
+    direct_sales_year = query.get_airline_sales(conn, LAST_YEAR.strftime("%Y-%m-%d"),
+                                                    TODAY.strftime("%Y-%m-%d"), cur_airline, "direct")
+    indirect_sales_year = query.get_airline_sales(conn, LAST_YEAR.strftime("%Y-%m-%d"),TODAY.strftime("%Y-%m-%d"), cur_airline, "indirect")
+    print(direct_sales_month,indirect_sales_month,direct_sales_year,indirect_sales_year)
     if not session["signin"] and request.method == 'GET':
         session["error"] = 'Invalid username or password, please try again.'
         return redirect(url_for("sign_in"))
     elif session["signin"] and request.method == "GET" or (session["signin"] and request.method=="POST" and request.form["submit_button"]=="clear_search"):
-        TODAY = datetime.today()
-        THIS_YEAR, THIS_MONTH = TODAY.year, TODAY.month 
-        LAST_3_MONTH = TODAY - timedelta(days=30 * 3)
-        PAST_YEAR = THIS_YEAR -1
-        LAST_YEAR = TODAY - timedelta(days=365)
+        
         month_wise.append(["%d-%02d-01" % (THIS_YEAR, THIS_MONTH), TODAY.strftime("%Y-%m-%d"), 0])
         for i in range(1, 6):
             if THIS_MONTH - i > 0:
@@ -517,14 +535,7 @@ def staff_home():
         reports = query.view_reports(conn,cur_airline, month_wise[-1][0], TODAY.strftime("%Y-%m-%d"))
         month_wise.sort()
         update_month_wise_reports(reports, month_wise)
-        top_agent_month, top_agent_year,top_agent_commission = query.view_booking_agents(conn, cur_airline)
-        top_cus = query.get_frequent_cus(conn, cur_airline)
-        cus_info = query.get_cus_info(conn,cur_airline)
-        top_des_three = query.get_top_destinations(conn, LAST_3_MONTH.strftime("%Y-%m-%d"),
-                                                        TODAY.strftime("%Y-%m-%d"), cur_airline)
-        top_des_year = query.get_top_destinations(conn, LAST_YEAR.strftime("%Y-%m-%d"), TODAY.strftime("%Y-%m-%d"),
-                                                      cur_airline)
-        # top_des = query.get_top_destinations()
+        
 
         data_dic = query.public_view(conn)
         locations = query.get_locations(conn)
@@ -551,7 +562,11 @@ def staff_home():
                                 top_cus =top_cus,
                                 cus_info = cus_info,
                                 top_des_year = top_des_year,
-                                top_des_three = top_des_three
+                                top_des_three = top_des_three,
+                                direct_sales_month  = direct_sales_month,
+                                indirect_sales_month = indirect_sales_month,
+                                direct_sales_year = direct_sales_year,
+                                indirect_sales_year = indirect_sales_year
                             #    reports_current=reports_current,
                             #    reports_previous =reports_previous
                             #    top_three_month= top_three_month,
@@ -614,8 +629,6 @@ def staff_home():
                                all_agents = all_agents,
                                all_permission =all_permission,
                                month_wise=month_wise
-                            #    top_three_month=top_three_month,
-                            #    top_last_year=top_last_year
                                )   
     elif session["signin"] and request.method == "POST" and request.form["submit_button"] == "modify":
         html_get = {'flight_num': request.form.get("flight_num"),
