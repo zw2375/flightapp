@@ -232,17 +232,6 @@
                 <form  class = "staff_form add_flight" action="/sign_in/staff_home" method="post" >
                     <h2 class="form">Add Flight</h2>
                     <div class="form__group" >
-                    <label for="airline" class="form__label">Airline:</label>
-                    <input type="input" class="form__field" placeholder="Choose Airline:"  list="listairline"  autocomplete="off" name="airline" />
-                    <datalist id="listairline">
-                        {% for i in airlines %}
-                        {% if i == curairline%}
-                        <option>{{ i }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </datalist>
-                    </div>
-                    <div class="form__group" >
                     <label for="flight_num" class="form__label">Flight Number:</label>
                     <input type="input" class="form__field" placeholder="Flight Number:"    autocomplete="off" name="flight_num" />
                     </div>
