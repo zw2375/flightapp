@@ -599,6 +599,27 @@
             <p>{{i["booking_agent_email"]}} : {{i["commission"]}}  </p>
             {% endfor %}
         </div>
+        <div class=" top_customers">
+            Customer that buy the most tickets in the past year:
+            {% for i in top_cus %}
+            <p>{{i["customer_email"]}} : {{i["num_of_ticket"]}}  </p>
+            {% endfor %}
+            Customer List:
+            <!-- <p>{{cus_info}}</p> -->
+            {% for i in cus_info %}
+            <p>{{i["customer_email"]}} : {{i["flight_numbers"]}}  </p>
+            {% endfor %}
+        </div>
+        <div class="top_des">
+            Top 3 destinations in the past 3 months<br>
+            {% for i in top_des_three %}
+            <p>{{i["dst"]}} : {{i["num_of_purchase"]}}  </p>
+            {% endfor %}
+            Top 3 destinations in the past year <br>
+            {% for i in top_des_year %}
+            <p>{{i["dst"]}} : {{i["num_of_purchase"]}}</p>
+            {% endfor %}
+        </div>
         </div>
         </div>		
         </div>

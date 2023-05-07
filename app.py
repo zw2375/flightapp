@@ -493,20 +493,15 @@ def staff_home():
     all_permission = query.get_all_permission(conn,session)
     month_wise = []
     
-    # TODAY = datetime.today()
-    # LAST_3_MONTH = TODAY - timedelta(days=30 * 3)
-    # LAST_YEAR = TODAY - timedelta(days=365)
-
-    # top_three_month = query.get_top_destinations(conn, LAST_3_MONTH.strftime("%Y-%m-%d"),
-    #                                                 TODAY.strftime("%Y-%m-%d"), cur_airline)
-    # top_last_year = query.get_top_destinations(conn, LAST_YEAR.strftime("%Y-%m-%d"), TODAY.strftime("%Y-%m-%d"),
-    #                                                 cur_airline)
     if not session["signin"] and request.method == 'GET':
         session["error"] = 'Invalid username or password, please try again.'
         return redirect(url_for("sign_in"))
     elif session["signin"] and request.method == "GET" or (session["signin"] and request.method=="POST" and request.form["submit_button"]=="clear_search"):
         TODAY = datetime.today()
-        THIS_YEAR, PAST_YEAR, THIS_MONTH = TODAY.year, TODAY.year - 1, TODAY.month
+        THIS_YEAR, THIS_MONTH = TODAY.year, TODAY.month 
+        LAST_3_MONTH = TODAY - timedelta(days=30 * 3)
+        PAST_YEAR = THIS_YEAR -1
+        LAST_YEAR = TODAY - timedelta(days=365)
         month_wise.append(["%d-%02d-01" % (THIS_YEAR, THIS_MONTH), TODAY.strftime("%Y-%m-%d"), 0])
         for i in range(1, 6):
             if THIS_MONTH - i > 0:
@@ -523,10 +518,14 @@ def staff_home():
         month_wise.sort()
         update_month_wise_reports(reports, month_wise)
         top_agent_month, top_agent_year,top_agent_commission = query.view_booking_agents(conn, cur_airline)
-        # print("ticket_month",ticket_month)
-        # print("ticket_year", ticket_year)
-        # print("commission_year",commission_year)
-        # update_month_wise_reports(reports_previous, month_wise)
+        top_cus = query.get_frequent_cus(conn, cur_airline)
+        cus_info = query.get_cus_info(conn,cur_airline)
+        top_des_three = query.get_top_destinations(conn, LAST_3_MONTH.strftime("%Y-%m-%d"),
+                                                        TODAY.strftime("%Y-%m-%d"), cur_airline)
+        top_des_year = query.get_top_destinations(conn, LAST_YEAR.strftime("%Y-%m-%d"), TODAY.strftime("%Y-%m-%d"),
+                                                      cur_airline)
+        # top_des = query.get_top_destinations()
+
         data_dic = query.public_view(conn)
         locations = query.get_locations(conn)
         return render_template("homepage_staff.html",
@@ -548,7 +547,11 @@ def staff_home():
                                month_wise=month_wise,
                                top_agent_month = top_agent_month,
                                 top_agent_year = top_agent_year,
-                                top_agent_commission= top_agent_commission
+                                top_agent_commission= top_agent_commission,
+                                top_cus =top_cus,
+                                cus_info = cus_info,
+                                top_des_year = top_des_year,
+                                top_des_three = top_des_three
                             #    reports_current=reports_current,
                             #    reports_previous =reports_previous
                             #    top_three_month= top_three_month,
