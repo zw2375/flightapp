@@ -701,7 +701,7 @@ def add_agent(conn,agent_email,agent_pass,agent_id):
     cursor.close()
     return True
 def get_all_staff(conn):
-    query = """select username from airline_staff"""
+    query = """select * from airline_staff"""
     cursor = conn.cursor()
     cursor.execute(query)
     data = cursor.fetchall()

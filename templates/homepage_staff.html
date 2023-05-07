@@ -494,7 +494,7 @@
                         <input type="input" class="form__field" placeholder="Click to select staff"  list="all_staff"  autocomplete="off" name="staff_uname" />
                         <datalist id="all_staff">
                             {% for i in all_staff %}
-                                {%  if i['airline'] == cur_airline %}
+                                {%  if i['airline_name'] == cur_airline %}
                             <option>{{ i['username'] }}</option>
                                 {% endif %}
                             {% endfor %}
@@ -596,7 +596,7 @@
             Customer List:
             <!-- <p>{{cus_info}}</p> -->
             {% for i in cus_info %}
-            <p>{{i["customer_email"]}} : {{i["flight_numbers"]}}  </p>
+            <p>{{i["customer_email"]}} : Flight-{{i["flight_numbers"]}}  </p>
             {% endfor %}
         </div>
         <div class="top_des">
