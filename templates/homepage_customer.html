@@ -1,6 +1,7 @@
 {% extends"layout.html" %}
 
 {%block body %}
+<script src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
 
     // Load the Visualization API and the corechart package.
@@ -101,7 +102,7 @@
 			<div id = "spending_drawing"class="table-container" style="height: 30 * {{month_wise | safe}}.length / 7 + 300">
 				<section>
 					<h2 >Track Your Spending</h2>
-					<form action="/TrackMySpending" autocomplete="off" onsubmit="return formValidation()" method="POST">
+					<form action="/sign_in/customer_home" autocomplete="off" onsubmit="return formValidation()" method="POST">
 					<div class="bluebutton">
 						<div class="smaller-date-container">
 							<label class="label">Start date</label>             

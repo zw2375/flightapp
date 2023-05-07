@@ -205,7 +205,7 @@ def purchase(conn, flight_num, customer_email, booking_agent_email):
 
 # ======== Start of day time formatting fuction
 def getting_date():
-    now = str(datetime.datetime.now()).split()[0]
+    now = str(datetime.now()).split()[0]
     temp = now.split('-')
     date = temp[2]
     month = temp[1]

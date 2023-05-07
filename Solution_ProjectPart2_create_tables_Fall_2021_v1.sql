@@ -89,7 +89,7 @@ CREATE TABLE `customer` (
   `street` varchar(30) NOT NULL,
   `city` varchar(30) NOT NULL,
   `state` varchar(30) NOT NULL,
-  `phone_number` int(12) NOT NULL,
+  `phone_number` int(13) NOT NULL,
   `passport_number` varchar(30) NOT NULL,
   `passport_expiration` date NOT NULL,
   `passport_country` varchar(50) NOT NULL,
