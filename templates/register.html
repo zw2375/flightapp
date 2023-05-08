@@ -5,6 +5,9 @@
     <div class="container">
         <div class="signup-content">
             <div class="signup-form">
+                {%if error%}
+                <div class="error">{{error}}</div>
+                {%endif%} 
                 <h2 class="form-title">Sign up</h2>
                 <form method="POST" class="register-form" id="register-form"autocomplete="chrome-off">
                     <div class = "identity">

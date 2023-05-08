@@ -286,12 +286,15 @@ def sign_in():
 
 @app.route("/sign_in/customer_home", methods=['GET', 'POST'])
 def customer_home():
+    err = None
     session['signin'] = query.sign_in_check(conn, session['email'],session["password"], 'customer','')
     session["user_type"] = 'customer'
     locations = query.get_locations(conn)
     d = query.get_top5_number(conn)
     total_amount = 0
     month_wise = [] 
+    flight_cus = query.get_flight_cus(conn,session)
+    # print(flight_cus)
     if not session["signin"] and request.method == 'GET':
         session["error"] = 'Invalid username or password, please try again.'
         return redirect(url_for("sign_in"))
@@ -354,7 +357,7 @@ def customer_home():
                                                               TODAY.strftime("%Y-%m-%d"))
         my_spendings = query.get_my_spendings_certain_range(conn, session["email"], month_wise[-1][0],
                                                                month_wise[0][1])
-
+        
         month_wise.sort()
         
         update_month_wise_my_spendings(my_spendings, month_wise)
@@ -408,18 +411,42 @@ def customer_home():
                                month_wise=month_wise
                             )
         else:
-            print("hihihi")
             flight_num = request.form["submit_button"]
-            success,err = query.purchase(conn, flight_num, session['email'], 'NULL')
+            print(flight_cus)
+            
+            if flight_num in flight_cus.keys():
+                if session["email"] in flight_cus[int(flight_num)]:
+                    success = False
+                    err = "You already purchased this, please purchase other tickets."
+                if len(flight_cus[flight_num])> query.get_seats(conn,flight_num):
+                    success = False
+                    err = "Sorry, this flight is fully booked."
+            else:
+                success,err = query.purchase(conn, flight_num, session['email'], 'NULL')
             if success:
                 return redirect(url_for("customer_home"))
             else:
-                return redirect(url_for("customer_home"))
+                data_dic = query.public_view(conn)
+                return render_template('homepage_customer.html',
+                               # same results as
+                               departure_city=locations['departure_loc'],
+                               arrival_city=locations['arrival_loc'],
+                               all=data_dic,
+                               purchased = purchased_flight,
+                               airlines = query.get_airlines(conn),
+                               flight_num = query.get_flight_num(conn),
+                               data_list = d,
+                               total_amount=total_amount, 
+                               month_wise=month_wise,
+                               error = err
+                            )
 
 @app.route("/sign_in/agent_home", methods=["POST", "GET"])
 def agent_home():
+    err = None
     session['signin'] = query.sign_in_check(conn, session['email'],session["password"], 'booking_agent','')
     session["user_type"] = 'booking_agent'
+    flight_cus = query.get_flight_cus(conn,session)
     da = query.get_top_customer_number(conn,session)
     data_list2 = query.get_customer_commission(conn, session)
     locations = query.get_locations(conn)
@@ -477,16 +504,45 @@ def agent_home():
                                 ticket_total = ticket_total)
     else:
         purchase_email = request.form.get("purchase_email")
+        flight_num = request.form["submit_button"]
+        
+        if flight_num in flight_cus.keys():
+                if purchase_email in flight_cus[int(flight_num)]:
+                    success = False
+                    err = "You already purchased this, please purchase other tickets."
+                if len(flight_cus[flight_num])> query.get_seats(conn,flight_num):
+                    success = False
+                    err = "Sorry, this flight is fully booked."
         if purchase_email is None or purchase_email == '':
             success, err = False, 'Please enter both flight num and the customer email.'
-            print('executing if_clause')
-            return redirect(url_for("agent_home"))
-        else:
+        if success:
             flight_num = request.form["submit_button"]
             purchase_email = request.form.get("purchase_email")
             print(purchase_email)
             query.purchase(conn, flight_num, purchase_email, session['email'])
             return redirect(url_for("agent_home"))
+        else:
+            print(err)
+            data_dic = query.public_view(conn)
+            locations = query.get_locations(conn)
+            purchased_flight = query.get_purchased_flight(conn, session)
+            return render_template('homepage_booking_agent.html',
+                                departure_city=locations['departure_loc'],
+                                arrival_city=locations['arrival_loc'],
+                                all=data_dic,
+                                purchased=purchased_flight,
+                                total_month = total_month,
+                                avg_month = avg_month,
+                                total_year= total_year,
+                                flight_num=query.get_flight_num(conn),
+                                avg_year=avg_year,
+                                customer_emails = customer_emails,
+                                data_list1 = da,
+                                data_list2 = data_list2,
+                                ticket_total = ticket_total,
+                                error =err
+                                )
+                
 
 @app.route("/sign_in/staff_home", methods=["POST", "GET"])
 def staff_home():

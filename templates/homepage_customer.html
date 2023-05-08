@@ -29,6 +29,7 @@
     }
     
   </script>
+
 <form class="d-flex" >
 
 	<a href='{{ url_for("sign_out") }}'>
@@ -38,6 +39,9 @@
 <div class="container">
 	<div class="home-content">
 		<div class="home-form">
+			{%if error%}
+			<div class="error">{{error}}</div>
+			{%endif%}
 			<h2 class="form-title">Search Ticket to Purchase</h2>
 			
 			<form class = "purchase_form"action="/sign_in/customer_home" method="post">

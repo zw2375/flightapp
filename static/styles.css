@@ -3,6 +3,11 @@
     padding: 0;
     box-sizing: border-box;
 }
+.error{
+    color: #D8000C;
+    background-color: #FFBABA;
+    background-image: url('https://i.imgur.com/GnyDvKN.png');
+}
 ul{
     top: 30%;
     position: fixed;

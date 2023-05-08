@@ -5,7 +5,9 @@
 	<div class="home-content">
 		<div class="home-form">
 			<h2 class="form-title">Search Ticket to Purchase</h2>
-			
+			{%if error%}
+			<div class="error">{{error}}</div>
+			{%endif%} 
 			<form class = "purchase_form"action="/public_view" method="post">
 				<div class="form__group" id='from'>
 					<label for="from" class="form__label">Departure</label>

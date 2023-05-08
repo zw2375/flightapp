@@ -10,7 +10,10 @@
 </form>
 <div class='container'>
     <div class="home-content">
-        <div class="home-form">  
+        <div class="home-form"> 
+            {%if error%}
+			<div class="error">{{error}}</div>
+			{%endif%} 
             <div class="form-group">
                 <label for="selectView">I want to  &nbsp</label>
                 <select id="selectView">
