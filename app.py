@@ -414,11 +414,11 @@ def customer_home():
             flight_num = request.form["submit_button"]
             print(flight_cus.keys(),type(flight_cus.keys()))
             if int(flight_num) in flight_cus.keys():
-                print('hihihihi',flight_cus[int(flight_num)])
                 if session["email"] in flight_cus[int(flight_num)]:
                     success = False
                     err = "You already purchased this, please purchase other tickets."
-                if len(flight_cus[int(flight_num)])> query.get_seats(conn,flight_num):
+                if len(flight_cus[int(flight_num)])>=int(query.get_seats(conn,flight_num)):
+                    
                     success = False
                     err = "Sorry, this flight is fully booked."
             else:
@@ -510,7 +510,7 @@ def agent_home():
                 if purchase_email in flight_cus[int(flight_num)]:
                     success = False
                     err = "This customer already purchased this, please purchase other tickets."
-                if len(flight_cus[int(flight_num)])> query.get_seats(conn,flight_num):
+                if len(flight_cus[int(flight_num)])>=int(query.get_seats(conn,flight_num)):
                     success = False
                     err = "Sorry, this flight is fully booked."
         if purchase_email is None or purchase_email == '':
